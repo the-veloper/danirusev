@@ -17,10 +17,7 @@ async function handlePaymentIntentFailed(event: Stripe.Event) {
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const headersList = headers();
-  const signature = headersList.has('stripe-signature') 
-    ? headersList.get('stripe-signature')
-    : '';
+  const signature = req.headers.get('stripe-signature');
 
   if (!signature) {
     return NextResponse.json(
