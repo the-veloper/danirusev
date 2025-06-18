@@ -83,7 +83,7 @@ export default async function Home() {
       </section>
 
       <section className="mb-12">
-        <h2 className="text-3xl font-bold mb-6">Latest Products</h2>
+        <h2 className="text-3xl font-bold mb-6">Latest Products test</h2>
         <ProductGrid products={products} />
       </section>
     </main>
