@@ -4,7 +4,7 @@ import { Category } from '@/types/payload-types'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getTextFromRichText } from '@/lib/utils'
+import { getMediaUrl, getTextFromRichText } from '@/lib/utils'
 
 interface CategoryGridProps {
   categories: Category[]
@@ -18,6 +18,9 @@ export function CategoryGrid({ categories }: CategoryGridProps) {
       {categories.map((category) => {
         console.log('Category:', category.name, 'Image:', category.image)
         
+        // Use the utility function to get the correct URL
+        const imageUrl = getMediaUrl(category.image?.url)
+        
         return (
           <Link key={category.id} href={`/categories/${category.slug}`}>
             <Card className="group h-full overflow-hidden transition-colors hover:border-primary">
@@ -25,7 +28,7 @@ export function CategoryGrid({ categories }: CategoryGridProps) {
                 {category.image && (
                   <div className="aspect-[4/3] relative">
                     <Image
-                      src={category.image.url}
+                      src={imageUrl}
                       alt={category.image.alt}
                       fill
                       sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"

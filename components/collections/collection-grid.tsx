@@ -4,7 +4,7 @@ import { Collection } from '@/types/payload-types'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getTextFromRichText } from '@/lib/utils'
+import { getMediaUrl, getTextFromRichText } from '@/lib/utils'
 
 interface CollectionGridProps {
   collections: Collection[]
@@ -18,6 +18,9 @@ export function CollectionGrid({ collections }: CollectionGridProps) {
       {collections.map((collection) => {
         console.log('Collection:', collection.name, 'Image:', collection.image)
         
+        // Use the utility function to get the correct URL
+        const imageUrl = getMediaUrl(collection.image?.url)
+        
         return (
           <Link key={collection.id} href={`/collections/${collection.slug}`}>
             <Card className="group h-full overflow-hidden transition-colors hover:border-primary">
@@ -25,7 +28,7 @@ export function CollectionGrid({ collections }: CollectionGridProps) {
                 {collection.image && (
                   <div className="aspect-[2/1] relative">
                     <Image
-                      src={collection.image.url}
+                      src={imageUrl}
                       alt={collection.image.alt}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

@@ -4,7 +4,7 @@ import { Product } from '@/types/payload-types'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getTextFromRichText } from '@/lib/utils'
+import { getMediaUrl, getTextFromRichText } from '@/lib/utils'
 
 interface ProductGridProps {
   products: Product[]
@@ -16,11 +16,13 @@ export function ProductGrid({ products }: ProductGridProps) {
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {products.map((product) => {
-        // First try to find primary image, then fall back to first image
         const primaryImage = product.images?.find((img) => img.isPrimary)?.image || 
                             (product.images && product.images.length > 0 ? product.images[0].image : null)
         
         console.log('Product:', product.name, 'Image used:', primaryImage)
+        
+        // Use the utility function to get the correct URL
+        const imageUrl = getMediaUrl(primaryImage?.url)
         
         return (
           <Link key={product.id} href={`/products/${product.slug}`}>
@@ -29,7 +31,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                 {primaryImage && (
                   <div className="aspect-square relative">
                     <Image
-                      src={primaryImage.url}
+                      src={imageUrl}
                       alt={primaryImage.alt}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
