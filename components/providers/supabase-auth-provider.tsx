@@ -6,6 +6,12 @@ import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
+// Get the site URL from environment variable or fallback to window.location.origin
+const getSiteUrl = () => {
+  if (typeof window === 'undefined') return ''; // Handle server-side
+  return process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+};
+
 type AuthContextType = {
   user: User | null;
   isLoading: boolean;
@@ -53,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             name,
             role: 'customer',
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${getSiteUrl()}/auth/callback`,
         },
       });
 
@@ -111,7 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const resetPassword = async (email: string) => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${getSiteUrl()}/auth/callback`,
       });
 
       if (error) throw error;
