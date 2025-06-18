@@ -1,0 +1,140 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# E-commerce Template MVP Development Plan
+
+## Tech Stack Overview
+- Next.js 15.3.3 (App Router)
+- React 19.0.0
+- TypeScript
+- Payload CMS 3.43.0
+- Supabase 2.50.0
+- Stripe Integration
+- Shadcn UI + Tailwind CSS
+- Zustand (State Management)
+- Zod (Type Validation)
+
+## Phase 1: Project Setup & Core Infrastructure
+### 1.1 Project Configuration
+- [ ] Initialize Next.js project with TypeScript
+- [ ] Configure Tailwind CSS and Shadcn UI
+- [ ] Set up project structure and routing
+- [ ] Configure Payload CMS
+- [ ] Set up Supabase connection
+- [ ] Initialize Stripe integration
+
+### 1.2 Authentication & User Management
+- [ ] Implement Supabase authentication
+- [ ] Create user profiles and roles
+- [ ] Set up protected routes
+- [ ] Design auth-related components (login, register, forgot password)
+
+## Phase 2: Product Management & Catalog
+### 2.1 Product Infrastructure
+- [ ] Design product data model in Payload CMS
+- [ ] Set up product categories and collections
+- [ ] Implement product variants and attributes
+- [ ] Create product image management system
+
+### 2.2 Product UI Components
+- [ ] Build product listing components
+- [ ] Create product detail pages
+- [ ] Implement product search and filtering
+- [ ] Add product category navigation
+- [ ] Design responsive product grid/list views
+
+## Phase 3: Shopping Experience
+### 3.1 Cart Functionality
+- [ ] Implement cart state management with Zustand
+- [ ] Create cart UI components
+- [ ] Add product-to-cart functionality
+- [ ] Build cart modification features
+- [ ] Implement cart persistence
+
+### 3.2 Checkout Process
+- [ ] Design checkout flow
+- [ ] Implement address management
+- [ ] Create order summary component
+- [ ] Set up Stripe payment integration
+- [ ] Add order confirmation system
+
+## Phase 4: Order Management
+### 4.1 Order Processing
+- [ ] Create order data model
+- [ ] Implement order status tracking
+- [ ] Set up order history
+- [ ] Build order confirmation emails
+- [ ] Add order management in admin panel
+
+### 4.2 User Dashboard
+- [ ] Design user dashboard layout
+- [ ] Implement order history view
+- [ ] Add profile management
+- [ ] Create address book functionality
+- [ ] Build wishlist feature
+
+## Phase 5: Admin Features
+### 5.1 Admin Dashboard
+- [ ] Set up admin authentication
+- [ ] Create product management interface
+- [ ] Implement order management system
+- [ ] Add user management capabilities
+- [ ] Build analytics dashboard
+
+### 5.2 Content Management
+- [ ] Set up homepage content management
+- [ ] Create banner management system
+- [ ] Implement promotional features
+- [ ] Add SEO management tools
+
+## Phase 6: Performance & Polish
+### 6.1 Optimization
+- [ ] Implement image optimization
+- [ ] Add loading states and skeletons
+- [ ] Configure caching strategies
+- [ ] Optimize API routes
+- [ ] Set up error boundaries
+
+### 6.2 Final Touches
+- [ ] Add responsive design fixes
+- [ ] Implement dark mode
+- [ ] Add accessibility features
+- [ ] Create documentation
+- [ ] Perform security audit
+
+## Testing & Quality Assurance
+### For Each Phase
+- [ ] Unit tests for components
+- [ ] Integration tests for features
+- [ ] E2E testing for critical flows
+- [ ] Performance testing
+- [ ] Security testing
+
+## Deployment Checklist
+- [ ] Environment configuration
+- [ ] SSL setup
+- [ ] Database backups
+- [ ] Monitoring setup
+- [ ] CI/CD pipeline
+
+## MVP Success Criteria
+1. Users can browse and search products
+2. Authentication system works flawlessly
+3. Cart and checkout process is smooth
+4. Orders are properly managed
+5. Admin can manage products and orders
+6. Site is responsive and performant
+7. Basic analytics are in place
+8. Security measures are implemented
+
+## Timeline Estimation
+- Phase 1: 1 week
+- Phase 2: 1.5 weeks
+- Phase 3: 1.5 weeks
+- Phase 4: 1 week
+- Phase 5: 1 week
+- Phase 6: 1 week
+Total: ~7 weeks for MVP
+
