@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "prebuild": "pnpm approve-builds @tailwindcss/oxide esbuild sharp",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
