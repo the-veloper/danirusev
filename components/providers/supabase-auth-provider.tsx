@@ -6,10 +6,22 @@ import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-// Get the site URL from environment variable or fallback to window.location.origin
+// Get the site URL from environment variable with no fallback
 const getSiteUrl = () => {
   if (typeof window === 'undefined') return ''; // Handle server-side
-  return process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+  
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!siteUrl) {
+    console.error('NEXT_PUBLIC_SITE_URL is not set!');
+    // In development, fall back to localhost
+    if (process.env.NODE_ENV === 'development') {
+      return 'http://localhost:3000';
+    }
+    // In production, we must have the environment variable
+    throw new Error('NEXT_PUBLIC_SITE_URL must be set in production!');
+  }
+  
+  return siteUrl;
 };
 
 type AuthContextType = {
@@ -51,6 +63,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, name: string) => {
     try {
+      const siteUrl = getSiteUrl();
+      console.log('Using site URL for redirect:', siteUrl); // Debug log
+      
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -59,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             name,
             role: 'customer',
           },
-          emailRedirectTo: `${getSiteUrl()}/auth/callback`,
+          emailRedirectTo: `${siteUrl}/auth/callback`,
         },
       });
 
@@ -116,8 +131,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const resetPassword = async (email: string) => {
     try {
+      const siteUrl = getSiteUrl();
+      console.log('Using site URL for reset password:', siteUrl); // Debug log
+      
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${getSiteUrl()}/auth/callback`,
+        redirectTo: `${siteUrl}/auth/callback`,
       });
 
       if (error) throw error;
