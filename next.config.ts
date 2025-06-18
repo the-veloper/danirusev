@@ -1,18 +1,19 @@
-import { withPayload } from "@payloadcms/next/withPayload";
-import type { NextConfig } from "next";
-import type { Configuration } from 'webpack';
+import { type NextConfig } from 'next'
 
-/** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
-  webpack: (config: Configuration) => {
-    config.externals = [...(config.externals || []), 'sharp']
-    return config
-  },
   logging: {
     fetches: {
       fullUrl: true,
     },
   },
-};
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+  },
+}
 
-export default withPayload(nextConfig);
+export default nextConfig
