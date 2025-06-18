@@ -3,11 +3,8 @@ import Image from 'next/image'
 import { getPayload } from 'payload'
 import React from 'react'
 import { fileURLToPath } from 'url'
-import { Button } from '@/components/ui/button'
-
 import config from '@/payload.config'
 import './styles.css'
-import { ModeToggle } from '@/components/ui/theme-switch'
 
 export default async function HomePage() {
   const headers = await getHeaders()
