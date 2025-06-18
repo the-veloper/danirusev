@@ -1,58 +1,49 @@
-import { headers as getHeaders } from 'next/headers.js'
-import Image from 'next/image'
-import { getPayload } from 'payload'
-import React from 'react'
-import { fileURLToPath } from 'url'
-import config from '@/payload.config'
-import './styles.css'
+import { ProductGrid } from '@/components/products/product-grid'
+import { CategoryGrid } from '@/components/categories/category-grid'
+import { CollectionGrid } from '@/components/collections/collection-grid'
+import { Product, Category, Collection } from '@/types/payload-types'
 
-export default async function HomePage() {
-  const headers = await getHeaders()
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
-  const { user } = await payload.auth({ headers })
+async function getProducts(): Promise<Product[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products?where[status][equals]=published`)
+  const data = await res.json()
+  return data.docs
+}
 
-  const fileURL = `vscode://file/${fileURLToPath(import.meta.url)}`
+async function getCategories(): Promise<Category[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/categories`)
+  const data = await res.json()
+  return data.docs
+}
+
+async function getCollections(): Promise<Collection[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/collections`)
+  const data = await res.json()
+  return data.docs
+}
+
+export default async function Home() {
+  const [products, categories, collections] = await Promise.all([
+    getProducts(),
+    getCategories(),
+    getCollections(),
+  ])
 
   return (
-    <div className="home">
-      <div className="content">
-        <picture>
-          <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg" />
-          <Image
-            alt="Payload Logo"
-            height={65}
-            src="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg"
-            width={65}
-          />
-        </picture>
-        {!user && <h1>Welcome to your new project.</h1>}
-        {user && <h1>Welcome back, {user.email}</h1>}
-        <div className="links">
-          <a
-            className="admin"
-            href={payloadConfig.routes.admin}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Go to admin panel
-          </a>
-          <a
-            className="docs"
-            href="https://payloadcms.com/docs"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Documentation
-          </a>
-        </div>
-      </div>
-      <div className="footer">
-        <p>Update this page by editing</p>
-        <a className="codeLink" href={fileURL}>
-          <code>app/(frontend)/page.tsx</code>
-        </a>
-      </div>
-    </div>
+    <main className="container mx-auto px-4 py-8">
+      <section className="mb-12">
+        <h2 className="text-3xl font-bold mb-6">Categories</h2>
+        <CategoryGrid categories={categories} />
+      </section>
+
+      <section className="mb-12">
+        <h2 className="text-3xl font-bold mb-6">Featured Collections</h2>
+        <CollectionGrid collections={collections} />
+      </section>
+
+      <section className="mb-12">
+        <h2 className="text-3xl font-bold mb-6">Latest Products</h2>
+        <ProductGrid products={products} />
+      </section>
+    </main>
   )
 }
