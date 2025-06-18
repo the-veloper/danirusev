@@ -1,6 +1,11 @@
-import { Access } from 'payload/types';
+import type { Access } from 'payload'
 
-export const isAdmin: Access = ({ req: { user } }) => {
+interface User {
+  role?: string
+}
+
+export const isAdmin: Access = ({ req }) => {
   // Return true if user has admin role
-  return Boolean(user?.role === 'admin');
-}; 
+  const user = req.user as User | undefined
+  return Boolean(user?.role === 'admin')
+} 

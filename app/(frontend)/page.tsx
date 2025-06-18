@@ -4,21 +4,63 @@ import { CollectionGrid } from '@/components/collections/collection-grid'
 import { Product, Category, Collection } from '@/types/payload-types'
 
 async function getProducts(): Promise<Product[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products?where[status][equals]=published`)
-  const data = await res.json()
-  return data.docs
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/products?where[status][equals]=published`,
+      { next: { revalidate: 3600 } } // Cache for 1 hour
+    )
+    
+    if (!res.ok) {
+      console.error('Failed to fetch products:', await res.text())
+      return []
+    }
+    
+    const data = await res.json()
+    return data.docs || []
+  } catch (error) {
+    console.error('Error fetching products:', error)
+    return []
+  }
 }
 
 async function getCategories(): Promise<Category[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/categories`)
-  const data = await res.json()
-  return data.docs
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/categories`,
+      { next: { revalidate: 3600 } } // Cache for 1 hour
+    )
+    
+    if (!res.ok) {
+      console.error('Failed to fetch categories:', await res.text())
+      return []
+    }
+    
+    const data = await res.json()
+    return data.docs || []
+  } catch (error) {
+    console.error('Error fetching categories:', error)
+    return []
+  }
 }
 
 async function getCollections(): Promise<Collection[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/collections`)
-  const data = await res.json()
-  return data.docs
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/collections`,
+      { next: { revalidate: 3600 } } // Cache for 1 hour
+    )
+    
+    if (!res.ok) {
+      console.error('Failed to fetch collections:', await res.text())
+      return []
+    }
+    
+    const data = await res.json()
+    return data.docs || []
+  } catch (error) {
+    console.error('Error fetching collections:', error)
+    return []
+  }
 }
 
 export default async function Home() {

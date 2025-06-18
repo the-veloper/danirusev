@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload/types';
+import type { CollectionConfig } from 'payload'
 import { isAdmin } from '../access/isAdmin';
 
 export const Products: CollectionConfig = {
@@ -63,14 +63,14 @@ export const Products: CollectionConfig = {
     {
       name: 'category',
       type: 'relationship',
-      relationTo: 'categories',
+      relationTo: 'categories' as any,
       required: true,
       hasMany: false,
     },
     {
       name: 'collections',
       type: 'relationship',
-      relationTo: 'collections',
+      relationTo: 'collections' as any,
       hasMany: true,
     },
     {

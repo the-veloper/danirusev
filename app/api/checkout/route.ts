@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
-import { createCheckoutSession } from '@/lib/checkout';
+import { CreateCheckoutParams, createCheckoutSession } from '@/lib/checkout';
 import { z } from 'zod';
 
 const checkoutSchema = z.object({
   items: z.array(
     z.object({
-      price: z.string(),
+      price: z.string().min(1),
       quantity: z.number().int().positive(),
     })
-  ),
+  ).min(1),
   successUrl: z.string().url(),
   cancelUrl: z.string().url(),
   metadata: z.record(z.string()).optional(),
@@ -17,7 +17,7 @@ const checkoutSchema = z.object({
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const validatedData = checkoutSchema.parse(body);
+    const validatedData = checkoutSchema.parse(body) as CreateCheckoutParams;
 
     const session = await createCheckoutSession(validatedData);
 

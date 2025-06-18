@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload/types';
+import type { CollectionConfig } from 'payload'
 import { isAdmin } from '../access/isAdmin';
 
 export const Categories: CollectionConfig = {
@@ -28,7 +28,7 @@ export const Categories: CollectionConfig = {
     {
       name: 'parent',
       type: 'relationship',
-      relationTo: 'categories',
+      relationTo: 'categories' as any,
       hasMany: false,
       admin: {
         description: 'Parent category if this is a subcategory',
