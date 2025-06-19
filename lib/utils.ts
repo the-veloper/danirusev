@@ -6,23 +6,26 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Extracts plain text from a rich text object or returns the original string
+ * Extracts plain text from a rich text field
+ * @param richText The rich text field from Payload
+ * @returns A plain text string
  */
-export function getTextFromRichText(content: any): string {
-  if (!content) return '';
-  if (typeof content === 'string') return content;
-  if (content.root && content.root.children) {
-    return content.root.children
-      .map((child: any) => {
-        if (child.text) return child.text;
-        if (child.children) {
-          return child.children.map((c: any) => c.text || '').join('');
-        }
-        return '';
-      })
-      .join('');
+export function getTextFromRichText(richText: any): string {
+  if (!richText || !Array.isArray(richText)) {
+    return '';
   }
-  return '';
+
+  return richText
+    .map((node) => {
+      if (node.type === 'text') {
+        return node.text || '';
+      } else if (node.children && Array.isArray(node.children)) {
+        return getTextFromRichText(node.children);
+      }
+      return '';
+    })
+    .join(' ')
+    .trim();
 }
 
 /**

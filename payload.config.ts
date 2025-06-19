@@ -16,6 +16,15 @@ import { Collections } from './collections/Collections'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+// Log environment variables (without sensitive values)
+console.log('Environment check:');
+console.log('- S3_BUCKET set:', Boolean(process.env.S3_BUCKET));
+console.log('- S3_REGION set:', Boolean(process.env.S3_REGION));
+console.log('- S3_ENDPOINT set:', Boolean(process.env.S3_ENDPOINT));
+console.log('- S3_ACCESS_KEY_ID set:', Boolean(process.env.S3_ACCESS_KEY_ID));
+console.log('- S3_SECRET_ACCESS_KEY set:', Boolean(process.env.S3_SECRET_ACCESS_KEY));
+console.log('- SERVER_URL:', process.env.NEXT_PUBLIC_SERVER_URL);
+
 export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',
   admin: {
@@ -66,6 +75,6 @@ export default buildConfig({
       fileSize: 5000000, // 5MB, written in bytes
     },
   },
+  // Configure sharp for image processing
   sharp,
-  // We don't need any additional plugins for now
 })

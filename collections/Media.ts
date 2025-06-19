@@ -11,7 +11,13 @@ export const Media: CollectionConfig = {
   },
   upload: {
     staticDir: 'media',
-    mimeTypes: ['image/png', 'image/jpeg', 'image/webp'],
+    mimeTypes: ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'],
+    formatOptions: {
+      format: 'webp',
+      options: {
+        quality: 85
+      }
+    },
   },
   fields: [
     {

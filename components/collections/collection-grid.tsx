@@ -1,54 +1,39 @@
 'use client'
 
 import { Collection } from '@/types/payload-types'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import Image from 'next/image'
-import Link from 'next/link'
-import { getMediaUrl, getTextFromRichText } from '@/lib/utils'
+import { CollectionCard } from './collection-card'
 
 interface CollectionGridProps {
-  collections: Collection[]
+  collections: Array<Collection & { productCount?: number; productImages?: string[] }>
+  title?: string
+  description?: string
 }
 
-export function CollectionGrid({ collections }: CollectionGridProps) {
-  console.log('Collections:', collections)
-  
+export function CollectionGrid({ 
+  collections, 
+  title = "Curated Collections",
+  description = "Handpicked collections by our experts, designed to inspire and delight" 
+}: CollectionGridProps) {
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {collections.map((collection) => {
-        console.log('Collection:', collection.name, 'Image:', collection.image)
-        
-        // Use the utility function to get the correct URL
-        const imageUrl = getMediaUrl(collection.image?.url)
-        
-        return (
-          <Link key={collection.id} href={`/collections/${collection.slug}`}>
-            <Card className="group h-full overflow-hidden transition-colors hover:border-primary">
-              <CardHeader className="border-b border-muted p-0">
-                {collection.image && (
-                  <div className="aspect-[2/1] relative">
-                    <Image
-                      src={imageUrl}
-                      alt={collection.image.alt}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover transition-transform group-hover:scale-105"
-                    />
-                  </div>
-                )}
-              </CardHeader>
-              <CardContent className="p-4">
-                <h3 className="font-semibold text-center">{collection.name}</h3>
-                {collection.description && (
-                  <div className="mt-2 text-sm text-muted-foreground text-center line-clamp-2">
-                    {getTextFromRichText(collection.description)}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </Link>
-        )
-      })}
+    <div>
+      {/* Header */}
+      {(title || description) && (
+        <div className="mb-8 text-center">
+          {title && <h2 className="text-3xl font-bold text-foreground mb-2">{title}</h2>}
+          {description && (
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              {description}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Collection Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {collections.map((collection) => (
+          <CollectionCard key={collection.id} collection={collection} />
+        ))}
+      </div>
     </div>
   )
 }
