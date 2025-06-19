@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { ProductCard } from "@/components/products/product-card"
 import { Product } from "@/types/payload-types"
 import { getTextFromRichText } from "@/lib/utils"
@@ -106,7 +106,7 @@ export default function ProductDetailContent({ product, relatedProducts, product
   
   const specifications = {
     Material: "925 Sterling Silver",
-    Weight: "15g",
+    Weight: "15g", // Hardcoded for now
     Dimensions: "Adjustable",
     Gemstone: "Cubic Zirconia",
     Finish: "Polished",

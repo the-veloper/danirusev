@@ -1,4 +1,4 @@
-import { Product, Category } from '@/types/payload-types'
+import { Product } from '@/types/payload-types'
 import { getMediaUrl } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 import ProductDetailContent from './product-detail-content'
@@ -48,8 +48,19 @@ async function getRelatedProducts(categoryId: string, productId: string): Promis
   }
 }
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
-  const product = await getProduct(params.slug)
+type Args = {
+  params: Promise<{
+    slug: string
+  }>
+  searchParams: Promise<{
+    [key: string]: string | string[]
+  }>
+}
+
+export default async function ProductPage({ params, searchParams }: Args) {
+  const resolvedParams = await params
+  const slug = resolvedParams.slug
+  const product = await getProduct(slug)
   
   if (!product) {
     notFound()
