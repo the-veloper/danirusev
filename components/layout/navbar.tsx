@@ -128,10 +128,10 @@ export function Navbar() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/account" className="text-foreground">Account Settings</Link>
+                  <Link href="/account" className="text-foreground">Настройки</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/orders" className="text-foreground">Orders</Link>
+                  <Link href="/orders" className="text-foreground">Поръчки</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -143,7 +143,7 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button variant="main" className='text-alt font-gagalin bg-main ' asChild>
+            <Button variant="main" className='text-alt font-gagalin bg-main mr-3' asChild>
               <Link href="/sign-in">Вход</Link>
             </Button>
           )}

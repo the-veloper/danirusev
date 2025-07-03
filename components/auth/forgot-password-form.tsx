@@ -40,14 +40,17 @@ export default function ForgotPasswordForm() {
   };
 
   return (
+
+
     <div className="grid gap-6">
+      
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
-              placeholder="name@example.com"
+              placeholder="danirusev@gmail.com"
               type="email"
               autoCapitalize="none"
               autoComplete="email"
@@ -60,16 +63,16 @@ export default function ForgotPasswordForm() {
             )}
           </div>
 
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Sending reset link...' : 'Send reset link'}
+          <Button size='lg' type="submit" disabled={isLoading} className='text-xl bg-main hover:bg-main/90 text-alt font-gagalin'>
+            {isLoading ? 'Изпращане...' : 'Изпращане на линк'}
           </Button>
         </div>
       </form>
 
       <div className="text-center text-sm">
-        Remember your password?{' '}
+        Помните си паролата?{' '}
         <Link href="/sign-in" className="underline">
-          Sign in
+          Вход
         </Link>
       </div>
     </div>

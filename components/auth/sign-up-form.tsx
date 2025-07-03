@@ -47,10 +47,10 @@ export default function SignUpForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">Име и Фамилия</Label>
             <Input
               id="name"
-              placeholder="John Doe"
+              placeholder="Дани Русев"
               type="text"
               autoCapitalize="none"
               autoCorrect="off"
@@ -63,10 +63,10 @@ export default function SignUpForm() {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">Имейл</Label>
             <Input
               id="email"
-              placeholder="name@example.com"
+              placeholder="danirusev@gmail.com"
               type="email"
               autoCapitalize="none"
               autoComplete="email"
@@ -80,7 +80,7 @@ export default function SignUpForm() {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">Парола</Label>
             <Input
               id="password"
               placeholder="••••••••"
@@ -94,16 +94,16 @@ export default function SignUpForm() {
             )}
           </div>
 
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Creating account...' : 'Create account'}
+          <Button size='lg' type="submit" disabled={isLoading} className='text-xl bg-main hover:bg-main/90 text-alt font-gagalin'>
+            {isLoading ? 'Създаване на профил...' : 'Създай профил'}
           </Button>
         </div>
       </form>
 
       <div className="text-center text-sm">
-        Already have an account?{' '}
+        Вече имаш профил?{' '}
         <Link href="/sign-in" className="underline">
-          Sign in
+          Вход
         </Link>
       </div>
     </div>

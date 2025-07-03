@@ -45,10 +45,10 @@ export default function SignInForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">Имейл</Label>
             <Input
               id="email"
-              placeholder="name@example.com"
+              placeholder="dani_goteniq@gmail.com"
               type="email"
               autoCapitalize="none"
               autoComplete="email"
@@ -63,12 +63,12 @@ export default function SignInForm() {
 
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Парола</Label>
               <Link
                 href="/forgot-password"
                 className="text-sm text-muted-foreground hover:underline"
               >
-                Forgot password?
+                Забравена парола?
               </Link>
             </div>
             <Input
@@ -84,16 +84,16 @@ export default function SignInForm() {
             )}
           </div>
 
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Signing in...' : 'Sign in'}
+          <Button size='lg' type="submit" disabled={isLoading} className='text-xl bg-main hover:bg-main/90 text-alt font-gagalin'>
+            {isLoading ? 'Влизане...' : 'Вход'}
           </Button>
         </div>
       </form>
 
       <div className="text-center text-sm">
-        Don't have an account?{' '}
+        Нямаш профил?{' '}
         <Link href="/sign-up" className="underline">
-          Sign up
+          Регистрация
         </Link>
       </div>
     </div>
