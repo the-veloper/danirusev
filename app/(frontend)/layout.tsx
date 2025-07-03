@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 import { AuthProvider } from '@/components/providers/supabase-auth-provider';
 import { Toaster } from 'sonner';
 import { Navbar } from "@/components/layout/navbar";
+import localFont from "next/font/local";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,6 +15,11 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const gagalin = localFont({
+  src: "../../public/fonts/Gagalin-Regular.otf",
+  variable: "--font-gagalin",
 });
 
 export const metadata: Metadata = {
@@ -29,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${gagalin.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"

@@ -14,19 +14,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/components/providers/supabase-auth-provider';
+import Logo from '@/components/ui/logo';
+
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { user, signOut } = useAuth();
-  
-  // Navigation items
+
   const navItems = [
-    { label: 'Home', href: '/' },
-    { label: 'Shop', href: '/shop' },
-    { label: 'Categories', href: '/categories' },
-    { label: 'About', href: '/about' },
-    { label: 'Contact', href: '/contact' },
+    { label: 'Начало', href: '/' },
+    { label: 'Преживявания', href: '/experiences' },
+    { label: 'Магазин 🔒', href: '/shop', disabled: true },
+    { label: 'Абонамент 🔒', href: '/subscription', disabled: true },
+    { label: 'Контакти', href: '/contact' },
   ];
 
   return (
@@ -45,24 +46,46 @@ export function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-lg font-bold text-foreground">STORE</span>
+            <Logo />
           </Link>
+        </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex lg:items-center lg:gap-x-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  pathname === item.href
-                    ? 'text-foreground'
-                    : 'text-muted-foreground'
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+        {/* Desktop Navigation (Centered) */}
+        <div className="hidden lg:flex flex-1 items-center justify-center">
+          <div className="flex items-center gap-x-6">
+            {navItems.map((item) =>
+              item.disabled ? (
+                <Button
+                  variant='main'
+                  size='sm'
+                  className='text-md mx-1 font-gagalin transition-colors text-alt/90 dark:text-main/90'
+                  disabled
+                >
+                  <span className='flex items-center'>
+                    {item.label}
+                  </span>
+                </Button>
+              ) : (
+                <Button
+                  key={item.href}
+                  variant='main'
+                  size='sm'
+                  className='text-md mx-1 font-gagalin transition-colors '
+                  asChild
+                >
+                  <Link
+                    href={item.href}
+                    className={`text-md mx-1 font-gagalin transition-colors ${
+                      pathname === item.href
+                        ? 'text-alt dark:text-main dark:hover:text-alt'
+                        : 'text-alt dark:text-main dark:hover:text-alt'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                </Button>
+              )
+            )}
           </div>
         </div>
 
@@ -72,9 +95,9 @@ export function Navbar() {
 
           {/* Shopping Cart */}
           <Button
-            variant="ghost"
+            variant="main"
             size="icon"
-            className="relative text-foreground hover:text-foreground"
+            className="relative "
             aria-label="Shopping Cart"
           >
             <ShoppingCart className="h-5 w-5" />
@@ -115,13 +138,13 @@ export function Navbar() {
                   className="text-red-600 focus:text-red-600"
                   onClick={() => signOut()}
                 >
-                  Sign Out
+                  Изход
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button variant="default" asChild>
-              <Link href="/sign-in">Sign In</Link>
+            <Button variant="main" className='text-alt font-gagalin bg-main ' asChild>
+              <Link href="/sign-in">Вход</Link>
             </Button>
           )}
         </div>
@@ -131,21 +154,33 @@ export function Navbar() {
       {isMobileMenuOpen && (
         <div className="border-b bg-background px-4 py-4 lg:hidden">
           {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`block py-2 text-foreground font-medium transition-colors hover:text-primary ${
-                pathname === item.href
-                  ? 'text-foreground'
-                  : 'text-muted-foreground'
-              }`}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {item.label}
-            </Link>
+            <div key={item.href}>
+              {item.disabled ? (
+                <span
+                  className="py-2 text-muted-foreground font-medium flex items-center cursor-not-allowed opacity-60 select-none"
+                  aria-disabled="true"
+                  tabIndex={-1}
+                >
+                  {item.label}
+                </span>
+              ) : (
+                <Link
+                  href={item.href}
+                  className={`block py-2 text-foreground font-medium transition-colors hover:text-primary ${
+                    pathname === item.href
+                      ? 'text-foreground'
+                      : 'text-muted-foreground'
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              )}
+            </div>
           ))}
         </div>
       )}
     </nav>
   );
-} 
+}
+
