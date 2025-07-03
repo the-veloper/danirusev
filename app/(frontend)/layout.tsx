@@ -6,6 +6,7 @@ import { AuthProvider } from '@/components/providers/supabase-auth-provider';
 import { Toaster } from 'sonner';
 import { Navbar } from "@/components/layout/navbar";
 import localFont from "next/font/local";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,7 +46,9 @@ export default function RootLayout({
         >
           <AuthProvider>
             <Navbar />
-            {children}
+            <Suspense fallback={<div>Loading...</div>}>
+              {children}
+            </Suspense>
             <Toaster />
           </AuthProvider>
         </ThemeProvider>
