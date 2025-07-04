@@ -7,46 +7,25 @@
  */
 
 export interface Config {
-  auth: {
-    users: UserAuthOperations;
-  };
   collections: {
     users: User;
     media: Media;
+    experiences: Experience;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
+  };
+  globals: {};
+  user: User & {
+    collection: 'users';
   };
   db: {
     defaultIDType: string;
   };
-  globals: {};
+  auth: {
+    users: UserAuthOperations;
+  };
   locale: null;
-  user: User & {
-    collection: 'users';
-  };
 }
-export interface UserAuthOperations {
-  forgotPassword: {
-    email: string;
-    password: string;
-  };
-  login: {
-    email: string;
-    password: string;
-  };
-  registerFirstUser: {
-    email: string;
-    password: string;
-  };
-  unlock: {
-    email: string;
-    password: string;
-  };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
 export interface User {
   id: string;
   updatedAt: string;
@@ -60,10 +39,6 @@ export interface User {
   lockUntil?: string | null;
   password?: string | null;
 }
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
 export interface Media {
   id: string;
   alt: string;
@@ -79,10 +54,59 @@ export interface Media {
   focalX?: number | null;
   focalY?: number | null;
 }
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-preferences".
- */
+export interface Experience {
+  id: string;
+  title: string;
+  subtitle: string;
+  price: number;
+  duration: string;
+  description: string;
+  gradient: string;
+  color: string;
+  icon: string;
+  sessions: string;
+  features?:
+    | {
+        feature: string;
+        id?: string | null;
+      }[]
+    | null;
+  locations?:
+    | {
+        location: string;
+        id?: string | null;
+      }[]
+    | null;
+  detailedInfo: {
+    overview: string;
+    whatYouGet?:
+      | {
+          item: string;
+          id?: string | null;
+        }[]
+      | null;
+    process?:
+      | {
+          step: string;
+          id?: string | null;
+        }[]
+      | null;
+    locations?:
+      | {
+          location: string;
+          id?: string | null;
+        }[]
+      | null;
+    requirements?:
+      | {
+          requirement: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
 export interface PayloadPreference {
   id: string;
   user: {
@@ -102,10 +126,6 @@ export interface PayloadPreference {
   updatedAt: string;
   createdAt: string;
 }
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-migrations".
- */
 export interface PayloadMigration {
   id: string;
   name?: string | null;
@@ -113,12 +133,23 @@ export interface PayloadMigration {
   updatedAt: string;
   createdAt: string;
 }
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "auth".
- */
-export interface Auth {
-  [k: string]: unknown;
+export interface UserAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
+  };
 }
 
 
