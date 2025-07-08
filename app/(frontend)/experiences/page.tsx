@@ -1,8 +1,10 @@
+import { Suspense } from 'react';
 import { getPayloadClient } from '@/lib/get-payload';
 import { ExperiencesPageClient } from './client-page';
 import { Experience } from '@/payload-types';
+import { ExperiencesPageSkeleton } from '@/components/experiences/experiences-page-skeleton';
 
-export default async function ExperiencesPage() {
+async function ExperiencesLoader() {
   const payload = await getPayloadClient();
 
   const { docs: experiences } = await payload.find({
@@ -11,9 +13,8 @@ export default async function ExperiencesPage() {
     sort: 'sort',
   });
 
-  // Transform the data to match the expected format in the client component
   const transformedExperiences = experiences.map((exp: Experience) => ({
-    id: exp.id.toString(), // Ensure ID is always a string
+    id: exp.id.toString(),
     title: exp.title,
     subtitle: exp.subtitle,
     price: exp.price.toString(),
@@ -39,4 +40,12 @@ export default async function ExperiencesPage() {
   }
 
   return <ExperiencesPageClient experiences={transformedExperiences} />;
+}
+
+export default function ExperiencesPage() {
+  return (
+    <Suspense fallback={<ExperiencesPageSkeleton />}>
+      <ExperiencesLoader />
+    </Suspense>
+  );
 }
