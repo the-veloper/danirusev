@@ -274,7 +274,7 @@ function ExperiencesView({ experiences }: ExperiencesPageClientProps) {
                 <Button
                   size="lg"
                   onClick={handleAddToCart}
-                  className={`bg-gradient-to-r ${gradients[experiences.findIndex(e => e.id === currentExperience.id) % gradients.length]} text-white px-12 py-4 text-lg font-bold hover:scale-105 transition-transform`}
+                  className={`bg-gradient-to-r ${gradients[experiences.findIndex(e => e.id === currentExperience.id) % gradients.length]} text-white px-12 py-4 text-lg font-bold text-outline-sm hover:scale-105 transition-transform`}
                 >
                   Купи Сега - {currentExperience.price} лв
                 </Button>
@@ -296,7 +296,71 @@ function ExperiencesView({ experiences }: ExperiencesPageClientProps) {
           </TabsList>
           {experiences.map((experience) => (
             <TabsContent key={experience.id} value={experience.id}>
-              {/* Mobile content remains the same */}
+              <div className="space-y-6">
+                {/* Mobile Card Header */}
+                <Card className={`bg-gradient-to-br ${gradients[experiences.findIndex(e => e.id === experience.id) % gradients.length]} relative`}>
+                  <div className="h-24 relative">
+                    <div className="relative z-10 p-6 text-white -mt-7">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="bg-white/20 backdrop-blur-sm rounded-full p-2">{getLucideIcon(experience.icon)}</div>
+                        <Badge variant="secondary" className="bg-white/90 text-gray-800 font-bold">{experience.price} лв</Badge>
+                      </div>
+                      <h3 className="text-xl font-bold text-outline-sm">{experience.title}</h3>
+                      <p className="text-sm opacity-90 text-outline-sm">{experience.subtitle}</p>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* Mobile Content */}
+                <div className="space-y-4">
+                  <p className="text-muted-foreground">{experience.detailedInfo.overview}</p>
+
+                  <Card>
+                    <CardContent className="p-4">
+                      <h4 className="font-bold mb-2 flex items-center gap-2"><CheckCircle className="h-4 w-4 text-main" />Какво Получавате:</h4>
+                      <div className="space-y-1">
+                        {experience.detailedInfo.whatYouGet.map((item, index) => (
+                          <div key={index} className="flex items-start gap-2 text-sm">
+                            <div className="w-1.5 h-1.5 bg-main rounded-full mt-1.5 flex-shrink-0"></div>
+                            <span>{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <Card>
+                      <CardContent className="p-4">
+                        <h4 className="font-bold mb-2">Времетраене:</h4>
+                        <p className="text-lg font-bold text-main">{experience.duration}</p>
+                        <p className="text-xs text-muted-foreground">{experience.sessions}</p>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-4">
+                        <h4 className="font-bold mb-2">Цена:</h4>
+                        <p className="text-lg font-bold">{experience.price} лв</p>
+                        <p className="text-xs text-muted-foreground">с включен ДДС</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <Button
+                    size="lg"
+                    onClick={() => addItem({
+                      id: experience.id,
+                      title: experience.title,
+                      price: experience.price,
+                      icon: experience.icon,
+                      whatYouGet: experience.detailedInfo.whatYouGet,
+                    })}
+                    className={`w-full bg-gradient-to-r ${gradients[experiences.findIndex(e => e.id === experience.id) % gradients.length]}  text-white font-bold`}
+                  >
+                    <span className="text-outline-md">Купи Сега - {experience.price} лв</span>
+                  </Button>
+                </div>
+              </div>
             </TabsContent>
           ))}
         </Tabs>
