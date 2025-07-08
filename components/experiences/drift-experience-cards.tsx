@@ -1,20 +1,37 @@
+"use client"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Clock, MapPin, Info } from "lucide-react"
+import { Clock, MapPin, Info, Check } from "lucide-react"
 import { Button } from "../ui/button"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 import * as LucideIcons from 'lucide-react';
 import { Experience } from "@/payload-types";
+import { useExperienceStore } from "@/lib/stores/experience-store"
 
 interface DriftExperienceCardsProps {
   experiences: Experience[];
 }
 
+const gradients = [
+  'from-yellow-400 via-amber-500 to-orange-600',
+  'from-cyan-400 via-rent to-indigo-600',
+  'from-lime-400 via-mix to-emerald-600',
+];
+
 export default function DriftExperienceCards({ experiences = [] }: DriftExperienceCardsProps) {
+  const router = useRouter()
+  const { setActiveId } = useExperienceStore()
+
   const getLucideIcon = (iconName: string) => {
     const IconComponent = (LucideIcons as any)[iconName];
     return IconComponent ? <IconComponent className="w-6 h-6" /> : null;
   };
+
+  const handleSeeMore = (id: string) => {
+    setActiveId(id)
+    router.push(`/experiences?experience=${id}`)
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -28,13 +45,13 @@ export default function DriftExperienceCards({ experiences = [] }: DriftExperien
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-        {experiences.map((experience) => (
+        {experiences.map((experience, index) => (
           <Card
             key={experience.id}
             className="relative overflow-hidden border border-black/20 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 bg-background backdrop-blur-sm"
           >
             {/* Gradient Header */}
-            <div className={`h-32 -mt-8  bg-gradient-to-br ${experience.gradient} relative`}>
+            <div className={`h-32 -mt-8  bg-gradient-to-br ${gradients[index % gradients.length]} relative`}>
               <div className="absolute inset-0 bg-black/20"></div>
               <div className="relative z-10 p-6 text-white">
                 <div className="flex items-center justify-between mb-2">
@@ -49,7 +66,7 @@ export default function DriftExperienceCards({ experiences = [] }: DriftExperien
             </div>
 
             <CardContent className="p-6 space-y-4">
-              <p className="text-sm text-muted-foreground leading-relaxed">{experience.description}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed h-20 overflow-hidden">{experience.description}</p>
 
               {/* Duration and Sessions */}
               <div className="flex items-center gap-4 text-sm">
@@ -71,31 +88,36 @@ export default function DriftExperienceCards({ experiences = [] }: DriftExperien
                 </div>
               </div>
 
-              {/* Features */}
-              {(experience.features && experience.features.length > 0) && (
-                <div className="space-y-2">
-                  <p className="text-xs font-medium text-gray-600 uppercase tracking-wide">Включва</p>
-                  <div className="grid grid-cols-1 gap-1">
-                    {experience.features.map((feature, index) => (
-                      <div key={index} className="flex items-center gap-2 text-sm">
-                        <div className="w-1.5 h-1.5 bg-main rounded-full"></div>
-                        <span>{feature.feature}</span>
+              {/* What You Get */}
+              {(experience.detailedInfo?.whatYouGet && experience.detailedInfo.whatYouGet.length > 0) && (
+                <div className="border-t pt-4">
+                  <div className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-main mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs font-medium text-gray-600 mb-1">ВКЛЮЧВА</p>
+                      <div className="grid grid-cols-1 gap-1">
+                        {(Array.isArray(experience.detailedInfo.whatYouGet) ? experience.detailedInfo.whatYouGet : []).slice(0, 4).map((item, index) => (
+                          <div key={index} className="flex items-center gap-2 text-sm">
+                            <div className="w-1.5 h-1.5 bg-main rounded-full"></div>
+                            <span>{typeof item === 'object' && item !== null && 'item' in item ? item.item : String(item)}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    </div>
                   </div>
                 </div>
               )}
 
               {/* Location */}
-              {(experience.locations && experience.locations.length > 0) && (
+              {(experience.detailedInfo?.locations && experience.detailedInfo.locations.length > 0) && (
                 <div className="border-t pt-4">
                   <div className="flex items-start gap-2">
                     <MapPin className="w-4 h-4 text-main mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="text-xs font-medium text-gray-600 mb-1">ЛОКАЦИЯ</p>
-                      {experience.locations.map((location, index) => (
+                      {(Array.isArray(experience.detailedInfo.locations) ? experience.detailedInfo.locations : []).map((location, index) => (
                         <p key={index} className="text-sm">
-                          {location.location}
+                          {typeof location === 'object' && location !== null && 'location' in location ? location.location : String(location)}
                         </p>
                       ))}
                     </div>
@@ -103,10 +125,8 @@ export default function DriftExperienceCards({ experiences = [] }: DriftExperien
                 </div>
               )}
 
-              <Button asChild className={`w-[60%] mx-auto flex bg-gradient-to-br ${experience.gradient} drop-shadow-xl/50`}>
-                <Link href={`/experiences?experience=${experience.id}`} className="flex items-center gap-2 text-alt">
-                  <span className="font-bold  text-white text-outline-sm">Виж повече</span>
-                </Link>
+              <Button onClick={() => handleSeeMore(experience.id)} className={`w-[60%] mx-auto flex bg-gradient-to-br ${gradients[index % gradients.length]} drop-shadow-xl/50`}>
+                <span className="font-bold text-white text-outline-sm">Виж повече</span>
               </Button>
 
             </CardContent>

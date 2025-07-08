@@ -9,6 +9,8 @@ async function getExperiences(): Promise<Experience[]> {
     const { docs: experiences } = await payload.find({
       collection: 'experiences',
       limit: 3, // Fetch only 3 for the homepage
+      sort: 'sort',
+      depth: 1, // Add depth to fetch nested fields
     })
     return experiences
   } catch (error) {

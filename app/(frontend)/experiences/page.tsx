@@ -8,28 +8,25 @@ export default async function ExperiencesPage() {
   const { docs: experiences } = await payload.find({
     collection: 'experiences',
     limit: 100,
+    sort: 'sort',
   });
 
   // Transform the data to match the expected format in the client component
   const transformedExperiences = experiences.map((exp: Experience) => ({
-    id: exp.id,
+    id: exp.id.toString(), // Ensure ID is always a string
     title: exp.title,
     subtitle: exp.subtitle,
-    price: exp.price.toString(), // Ensure price is a string
+    price: exp.price.toString(),
     duration: exp.duration,
     description: exp.description,
-    gradient: exp.gradient,
-    color: exp.color,
-    icon: exp.icon, // This will be a string, client component needs to handle rendering Lucide icon
+    icon: exp.icon,
     sessions: exp.sessions,
-    features: (exp.features || []).map(feat => feat.feature), // Ensure features is an array and extract string
-    locations: (exp.locations || []).map(loc => loc.location), // Ensure locations is an array and extract string
     detailedInfo: {
       overview: exp.detailedInfo.overview,
-      whatYouGet: (exp.detailedInfo.whatYouGet || []).map(item => item.item), // Ensure whatYouGet is an array and extract string
-      process: (exp.detailedInfo.process || []).map(step => step.step), // Ensure process is an array and extract string
-      locations: (exp.detailedInfo.locations || []).map(loc => loc.location), // Ensure locations is an array and extract string
-      requirements: (exp.detailedInfo.requirements || []).map(req => req.requirement), // Ensure requirements is an array and extract string
+      whatYouGet: (exp.detailedInfo.whatYouGet || []).map(item => item.item),
+      process: (exp.detailedInfo.process || []).map(step => step.step),
+      locations: (exp.detailedInfo.locations || []).map(loc => loc.location),
+      requirements: (exp.detailedInfo.requirements || []).map(req => req.requirement),
     },
   }));
 

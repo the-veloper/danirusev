@@ -4,8 +4,16 @@ export const Experiences: CollectionConfig = {
   slug: 'experiences',
   admin: {
     useAsTitle: 'title',
+    defaultColumns: ['title', 'sort', 'updatedAt'],
   },
   fields: [
+    {
+      name: 'sort',
+      type: 'number',
+      admin: {
+        position: 'sidebar',
+      }
+    },
     {
       name: 'title',
       type: 'text',
@@ -30,22 +38,6 @@ export const Experiences: CollectionConfig = {
       name: 'description',
       type: 'text',
       required: true,
-    },
-    {
-      name: 'gradient',
-      type: 'text',
-      required: true,
-      admin: {
-        description: 'Tailwind CSS gradient classes (e.g., "from-yellow-400 via-amber-500 to-orange-600")',
-      },
-    },
-    {
-      name: 'color',
-      type: 'text',
-      required: true,
-      admin: {
-        description: 'Tailwind CSS background color class (e.g., "bg-taxi")',
-      },
     },
     {
       name: 'icon',
