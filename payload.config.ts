@@ -51,6 +51,7 @@ export default buildConfig({
         rejectUnauthorized: false
       }
     },
+    schema: 'payload', // Isolate Payload tables
   }),
   plugins: [
     s3Storage({

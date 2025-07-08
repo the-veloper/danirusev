@@ -19,8 +19,8 @@ interface AccountFormProps {
 function SubmitButton() {
   const { pending } = useFormStatus()
   return (
-    <Button type="submit" disabled={pending}>
-      {pending ? "Saving..." : "Save Changes"}
+    <Button type="submit" disabled={pending} className="bg-main hover:bg-main/80 text-alt">
+      {pending ? "Запазване..." : "Запази промените"}
     </Button>
   )
 }
@@ -38,21 +38,23 @@ export function AccountForm({ user, profile }: AccountFormProps) {
   }, [state])
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 ">
       {/* User Info Column */}
       <div className="lg:col-span-1">
         <Card>
           <CardHeader>
-            <CardTitle>My Profile</CardTitle>
-            <CardDescription>Your account details.</CardDescription>
+            <CardTitle>Имена</CardTitle>
+            <CardDescription>
+            {user.user_metadata?.name || 'Customer'}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-1">
-              <Label>Email</Label>
+              <Label>Имейл</Label>
               <p className="text-sm text-muted-foreground">{user.email}</p>
             </div>
             <div className="space-y-1">
-              <Label>Joined</Label>
+              <Label>Регистриран на:</Label>
               <p className="text-sm text-muted-foreground">
                 {new Date(user.created_at).toLocaleDateString()}
               </p>
@@ -66,12 +68,12 @@ export function AccountForm({ user, profile }: AccountFormProps) {
         <form action={formAction}>
           <Card>
             <CardHeader>
-              <CardTitle>Shipping Information</CardTitle>
-              <CardDescription>Update your delivery address.</CardDescription>
+              <CardTitle>Информация за доставка</CardTitle>
+              <CardDescription>Променете адреса си за доставка.</CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="fullName">Full Name</Label>
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Име и Фамилия</Label>
                 <Input
                   id="fullName"
                   name="fullName"
@@ -81,8 +83,8 @@ export function AccountForm({ user, profile }: AccountFormProps) {
                   <p className="text-xs text-red-500">{state.fieldErrors.fullName}</p>
                 )}
               </div>
-               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="phoneNumber">Phone Number</Label>
+               <div className="space-y-2">
+                <Label htmlFor="phoneNumber">Тел. Номер</Label>
                 <Input
                   id="phoneNumber"
                   name="phoneNumber"
@@ -93,7 +95,7 @@ export function AccountForm({ user, profile }: AccountFormProps) {
                 )}
               </div>
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="address">Address</Label>
+                <Label htmlFor="address">Адрес</Label>
                 <Input
                   id="address"
                   name="address"
@@ -104,7 +106,7 @@ export function AccountForm({ user, profile }: AccountFormProps) {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="city">City</Label>
+                <Label htmlFor="city">Град</Label>
                 <Input
                   id="city"
                   name="city"
@@ -115,7 +117,7 @@ export function AccountForm({ user, profile }: AccountFormProps) {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="postalCode">Postal Code</Label>
+                <Label htmlFor="postalCode">Пощенски Код</Label>
                 <Input
                   id="postalCode"
                   name="postalCode"
@@ -126,7 +128,7 @@ export function AccountForm({ user, profile }: AccountFormProps) {
                 )}
               </div>
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="country">Country</Label>
+                <Label htmlFor="country">Държава</Label>
                 <Input
                   id="country"
                   name="country"

@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
 import { Minus, Plus, Trash, CheckCircle } from "lucide-react"
 import * as LucideIcons from 'lucide-react';
+import Link from "next/link"
 
 // Gradients to be used for backgrounds, matching the experience cards
 const gradients = [
@@ -98,8 +99,8 @@ export function Cart() {
               </div>
             </div>
             <SheetFooter>
-              <Button variant="main" className="w-full bg-main text-alt">
-                Продължи към плащане
+              <Button asChild className="w-full">
+                <Link href="/checkout">Continue to Checkout</Link>
               </Button>
             </SheetFooter>
           </div>
