@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/components/providers/supabase-auth-provider';
 import Logo from '@/components/ui/logo';
+import { CartWidget } from '../cart/cart-widget';
 
 
 export function Navbar() {
@@ -56,6 +57,7 @@ export function Navbar() {
             {navItems.map((item) =>
               item.disabled ? (
                 <Button
+                  key={item.href} // Added key here
                   variant='main'
                   size='sm'
                   className='text-md mx-1 font-gagalin transition-colors text-alt/90 dark:text-main/90'
@@ -94,17 +96,7 @@ export function Navbar() {
           <ModeToggle />
 
           {/* Shopping Cart */}
-          <Button
-            variant="main"
-            size="icon"
-            className="relative "
-            aria-label="Shopping Cart"
-          >
-            <ShoppingCart className="h-5 w-5" />
-            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
-              0
-            </span>
-          </Button>
+          <CartWidget />
 
           {/* User Menu */}
           {user ? (

@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Clock, MapPin, Star, Shield, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react"
 import * as LucideIcons from 'lucide-react'
 import { useExperienceStore } from "@/lib/stores/experience-store"
+import { useCartStore } from "@/lib/stores/cart-store"
 
 interface Experience {
   id: string;
@@ -44,9 +45,8 @@ function ExperiencesView({ experiences }: ExperiencesPageClientProps) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const { activeId, setActiveId } = useExperienceStore()
+  const { addItem } = useCartStore()
 
-  // This is now the ONLY effect syncing state. It reads from the URL.
-  // This prevents the infinite loop.
   useEffect(() => {
     const idFromUrl = searchParams.get('experience')
     const defaultId = experiences[0]?.id
@@ -59,7 +59,6 @@ function ExperiencesView({ experiences }: ExperiencesPageClientProps) {
       setActiveId(targetId)
     }
     
-    // If the URL has no valid experience, set it to the default one.
     if (!idFromUrl && targetId) {
       const params = new URLSearchParams()
       params.set('experience', targetId)
@@ -67,7 +66,6 @@ function ExperiencesView({ experiences }: ExperiencesPageClientProps) {
     }
   }, [searchParams, experiences, activeId, setActiveId, pathname, router])
 
-  // This function now ONLY updates the URL. The effect above will handle the state change.
   const navigateToExperience = (id: string) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set('experience', id)
@@ -80,6 +78,18 @@ function ExperiencesView({ experiences }: ExperiencesPageClientProps) {
   };
 
   const currentExperience = experiences.find((exp) => exp.id === activeId)
+
+  const handleAddToCart = () => {
+    if (currentExperience) {
+      addItem({
+        id: currentExperience.id,
+        title: currentExperience.title,
+        price: currentExperience.price,
+        icon: currentExperience.icon,
+        whatYouGet: currentExperience.detailedInfo.whatYouGet, // Pass the details
+      })
+    }
+  }
 
   if (!currentExperience) {
     return (
@@ -129,7 +139,7 @@ function ExperiencesView({ experiences }: ExperiencesPageClientProps) {
                     return (
                       <motion.div
                         key={experience.id}
-                        className={`absolute w-80 ${position === "center" ? "z-30" : "z-10"}`}
+                        className={`absolute w-80 cursor-pointer ${position === "center" ? "z-30" : "z-10"}`}
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{
                           opacity: position === "center" ? 1 : 0.4,
@@ -192,10 +202,10 @@ function ExperiencesView({ experiences }: ExperiencesPageClientProps) {
                     )
                   })}
                 </AnimatePresence>
-                <Button variant="outline" size="icon" className="cursor-pointer absolute left-4 z-40 bg-white/90 backdrop-blur-sm hover:bg-white" onClick={prevExperience}>
+                <Button variant="outline" size="icon" className="absolute left-4 z-40 bg-white/90 backdrop-blur-sm hover:bg-white" onClick={prevExperience}>
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
-                <Button variant="outline" size="icon" className="cursor-pointer absolute right-4 z-40 bg-white/90 backdrop-blur-sm hover:bg-white" onClick={nextExperience}>
+                <Button variant="outline" size="icon" className="absolute right-4 z-40 bg-white/90 backdrop-blur-sm hover:bg-white" onClick={nextExperience}>
                   <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>
@@ -261,7 +271,11 @@ function ExperiencesView({ experiences }: ExperiencesPageClientProps) {
                 </Card>
               </div>
               <div className="text-center w-full">
-                <Button size="lg" className={`bg-gradient-to-r ${gradients[experiences.findIndex(e => e.id === currentExperience.id) % gradients.length]} text-white px-12 py-4 text-lg font-bold hover:scale-105 transition-transform`}>
+                <Button
+                  size="lg"
+                  onClick={handleAddToCart}
+                  className={`bg-gradient-to-r ${gradients[experiences.findIndex(e => e.id === currentExperience.id) % gradients.length]} text-white px-12 py-4 text-lg font-bold hover:scale-105 transition-transform`}
+                >
                   Купи Сега - {currentExperience.price} лв
                 </Button>
               </div>
