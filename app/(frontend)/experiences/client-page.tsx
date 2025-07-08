@@ -129,7 +129,7 @@ function ExperiencesView({ experiences }: ExperiencesPageClientProps) {
                     return (
                       <motion.div
                         key={experience.id}
-                        className={`absolute w-80 cursor-pointer ${position === "center" ? "z-30" : "z-10"}`}
+                        className={`absolute w-80 ${position === "center" ? "z-30" : "z-10"}`}
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{
                           opacity: position === "center" ? 1 : 0.4,
@@ -192,10 +192,10 @@ function ExperiencesView({ experiences }: ExperiencesPageClientProps) {
                     )
                   })}
                 </AnimatePresence>
-                <Button variant="outline" size="icon" className="absolute left-4 z-40 bg-white/90 backdrop-blur-sm hover:bg-white" onClick={prevExperience}>
+                <Button variant="outline" size="icon" className="cursor-pointer absolute left-4 z-40 bg-white/90 backdrop-blur-sm hover:bg-white" onClick={prevExperience}>
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
-                <Button variant="outline" size="icon" className="absolute right-4 z-40 bg-white/90 backdrop-blur-sm hover:bg-white" onClick={nextExperience}>
+                <Button variant="outline" size="icon" className="cursor-pointer absolute right-4 z-40 bg-white/90 backdrop-blur-sm hover:bg-white" onClick={nextExperience}>
                   <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>

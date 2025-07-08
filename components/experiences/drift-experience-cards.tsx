@@ -125,7 +125,7 @@ export default function DriftExperienceCards({ experiences = [] }: DriftExperien
                 </div>
               )}
 
-              <Button onClick={() => handleSeeMore(experience.id)} className={`w-[60%] mx-auto flex bg-gradient-to-br ${gradients[index % gradients.length]} drop-shadow-xl/50`}>
+              <Button onClick={() => handleSeeMore(experience.id)} className={`cursor-pointer w-[60%] mx-auto flex bg-gradient-to-br ${gradients[index % gradients.length]} drop-shadow-xl/50`}>
                 <span className="font-bold text-white text-outline-sm">Виж повече</span>
               </Button>
 
