@@ -1,51 +1,44 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { createClient } from '@/utils/supabase/server' // Import the async client
 
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  })
+  // We are not using the response object directly, so we can remove it for now.
+  // The new createClient handles cookies server-side.
+  const supabase = await createClient()
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({ name, value, ...options })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({ name, value, ...options })
-        },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({ name, value: '', ...options })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({ name, value: '', ...options })
-        },
-      },
-    }
-  )
-
-  // This will refresh the session if it's expired
-  const { data: { session } } = await supabase.auth.getSession()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   // If the user is not logged in and tries to access the account page, redirect them
-  if (!session && request.nextUrl.pathname.startsWith('/account')) {
+  if (!user && request.nextUrl.pathname.startsWith('/account')) {
     const url = request.nextUrl.clone()
     url.pathname = '/sign-in'
     return NextResponse.redirect(url)
+  }
+
+  // Protect the /dash route
+  if (request.nextUrl.pathname.startsWith('/dash')) {
+    if (!user) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/sign-in'
+      return NextResponse.redirect(url)
+    }
+
+    // Check if the user is the Payload admin
+    const { data: adminUser, error } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', user.email)
+      .single()
+
+    if (error || !adminUser) {
+      // Not an admin, redirect to home page
+      const url = request.nextUrl.clone()
+      url.pathname = '/'
+      return NextResponse.redirect(url)
+    }
   }
   
   // Only allow test routes in development
@@ -53,7 +46,7 @@ export async function middleware(request: NextRequest) {
     return new NextResponse('Not Found', { status: 404 });
   }
 
-  return response
+  return NextResponse.next()
 }
 
 export const config = {
