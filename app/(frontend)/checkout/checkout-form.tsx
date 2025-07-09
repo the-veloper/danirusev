@@ -1,140 +1,191 @@
-"use client"
+'use client'
 
-import { useActionState } from "react"
-import { processCheckout, CheckoutFormState } from "./actions"
-import { useCartStore } from "@/lib/stores/cart-store"
-import { User } from "@supabase/supabase-js"
-import { Profile } from "@/types/supabase"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import Image from "next/image"
-import Link from "next/link"
-import { useEffect } from "react"
-import { toast } from "sonner"
-import * as LucideIcons from 'lucide-react';
+import { useCartStore } from '@/lib/stores/cart-store'
+import { Profile } from '@/types/supabase'
+import { useActionState, useEffect, useMemo } from 'react'
+import { useFormStatus } from 'react-dom'
+import { createOrder, CheckoutFormState } from './actions'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 interface CheckoutFormProps {
-  user: User | null
   profile: Profile | null
 }
 
-const gradients = [
-  'from-yellow-400 via-amber-500 to-orange-600',
-  'from-cyan-400 via-rent to-indigo-600',
-  'from-lime-400 via-mix to-emerald-600',
-];
-const experienceGradients: { [key: string]: string } = {
-  '1': gradients[0], '2': gradients[1], '3': gradients[2],
-};
-
 function SubmitButton() {
-  const { pending } = useFormStatus();
+  const { pending } = useFormStatus()
   return (
-    <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? "Processing Order..." : "Place Order"}
+    <Button
+      type="submit"
+      disabled={pending}
+      className="w-full bg-main hover:bg-main/80 text-alt"
+    >
+      {pending ? 'Processing...' : 'Confirm and Place Order'}
     </Button>
   )
 }
 
-export function CheckoutForm({ user, profile }: CheckoutFormProps) {
-  const { items: cartItems, clearCart } = useCartStore()
-  const subtotal = cartItems.reduce((acc, item) => acc + parseFloat(item.price) * item.quantity, 0)
+export function CheckoutForm({ profile }: CheckoutFormProps) {
+  const router = useRouter()
+  const { items, clearCart } = useCartStore()
 
-  const initialState: CheckoutFormState = { success: false, message: null }
-  const [state, formAction] = useActionState(processCheckout, initialState)
+  const initialState: CheckoutFormState = {
+    success: false,
+    message: null,
+    fieldErrors: null,
+    orderId: null,
+  }
+  const [state, formAction] = useActionState(createOrder, initialState)
+
+  const subtotal = useMemo(() => {
+    return items.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  }, [items])
 
   useEffect(() => {
-    if (state.success) {
-      // The redirect will happen on the server, but we clear the client-side store just in case
+    if (state.success && state.orderId) {
+      toast.success(state.message || 'Order placed successfully!')
       clearCart()
-    } else if (state.message) {
+      router.push(`/order-confirmation?order_id=${state.orderId}`)
+    } else if (!state.success && state.message) {
       toast.error(state.message)
     }
-  }, [state, clearCart])
+  }, [state, clearCart, router])
 
-  const getLucideIcon = (iconName: string) => {
-    const IconComponent = (LucideIcons as any)[iconName];
-    return IconComponent ? <IconComponent className="h-8 w-8 text-white" /> : null;
-  };
+  if (items.length === 0) {
+    return (
+      <div className="text-center">
+        <p>Your cart is empty.</p>
+        <Button onClick={() => router.push('/')} className="mt-4">
+          Continue Shopping
+        </Button>
+      </div>
+    )
+  }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-      {/* Right Side - Shipping Form */}
-      <div className="lg:order-last">
-        <h2 className="text-2xl font-bold mb-4">Shipping Information</h2>
-        {!user && (
-          <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md text-sm text-blue-800">
-            Have an account? <Link href="/sign-in" className="font-bold underline">Log in</Link> for a faster checkout.
-          </div>
-        )}
-        <form action={formAction}>
+    <form action={formAction}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left Side: Order Summary */}
+        <div className="lg:col-span-1">
           <Card>
-            <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* ... form fields ... */}
-              <div className="md:col-span-2 pt-4">
+            <CardHeader>
+              <CardTitle>Order Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {items.map(item => (
+                  <div key={item.id} className="flex justify-between items-center">
+                    <div>
+                      <p className="font-medium">{item.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Quantity: {item.quantity}
+                      </p>
+                    </div>
+                    <p className="font-medium">
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </p>
+                  </div>
+                ))}
+                <Separator />
+                <div className="flex justify-between font-bold text-lg">
+                  <p>Total</p>
+                  <p>${subtotal.toFixed(2)}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Side: Shipping Information */}
+        <div className="lg:col-span-1">
+          <Card>
+            <CardHeader>
+              <CardTitle>Shipping Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Hidden fields to pass cart data to the server action */}
+              <input
+                type="hidden"
+                name="cartItems"
+                value={JSON.stringify(
+                  items.map(item => ({
+                    id: item.id,
+                    title: item.title,
+                    price: item.price,
+                    quantity: item.quantity,
+                  })),
+                )}
+              />
+              <input type="hidden" name="totalPrice" value={subtotal} />
+
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Full Name</Label>
+                <Input
+                  id="fullName"
+                  name="fullName"
+                  defaultValue={profile?.full_name ?? ''}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phoneNumber">Phone Number</Label>
+                <Input
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  defaultValue={profile?.phone_number ?? ''}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="address">Address</Label>
+                <Input
+                  id="address"
+                  name="address"
+                  defaultValue={profile?.address ?? ''}
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="city">City</Label>
+                  <Input
+                    id="city"
+                    name="city"
+                    defaultValue={profile?.city ?? ''}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="postalCode">Postal Code</Label>
+                  <Input
+                    id="postalCode"
+                    name="postalCode"
+                    defaultValue={profile?.postal_code ?? ''}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="country">Country</Label>
+                <Input
+                  id="country"
+                  name="country"
+                  defaultValue={profile?.country ?? ''}
+                  required
+                />
+              </div>
+              <div className="pt-4">
                 <SubmitButton />
               </div>
             </CardContent>
           </Card>
-        </form>
+        </div>
       </div>
-
-      {/* Left Side - Order Summary */}
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
-        <Card>
-          <CardContent className="pt-6">
-            {cartItems.length > 0 ? (
-              <>
-                <ScrollArea className="h-[40vh]">
-                  <div className="flex flex-col gap-4">
-                    {cartItems.map(item => (
-                      <div key={item.id} className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className={`relative aspect-square h-16 w-16 overflow-hidden rounded-md flex items-center justify-center bg-gradient-to-br ${experienceGradients[item.id] || gradients[0]}`}>
-                            {getLucideIcon(item.icon)}
-                          </div>
-                          <div>
-                            <p className="font-medium">{item.title}</p>
-                            <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
-                          </div>
-                        </div>
-                        <p className="font-medium">{(parseFloat(item.price) * item.quantity).toFixed(2)} лв</p>
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-                <Separator className="my-4" />
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span>Subtotal</span>
-                    <span>{subtotal.toFixed(2)} лв</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Shipping</span>
-                    <span>Free</span>
-                  </div>
-                  <div className="flex justify-between font-bold text-lg">
-                    <span>Total</span>
-                    <span>{subtotal.toFixed(2)} лв</span>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="text-center py-12">
-                <p>Your cart is empty.</p>
-                <Button variant="outline" asChild className="mt-4">
-                  <Link href="/experiences">Browse Experiences</Link>
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+    </form>
   )
 }

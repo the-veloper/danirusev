@@ -52,15 +52,14 @@ export async function updateShippingInfo(
     }
   }
 
-  const { error } = await supabase.from("profiles").upsert({
-    id: user.id,
-    full_name: parsed.data.fullName,
-    address: parsed.data.address,
-    city: parsed.data.city,
-    postal_code: parsed.data.postalCode,
-    country: parsed.data.country,
-    phone_number: parsed.data.phoneNumber,
-    updated_at: new Date().toISOString(),
+  const { error } = await supabase.rpc("update_profile_shipping_and_billing", {
+    user_id: user.id,
+    full_name_param: parsed.data.fullName,
+    phone_number_param: parsed.data.phoneNumber,
+    address_param: parsed.data.address,
+    city_param: parsed.data.city,
+    postal_code_param: parsed.data.postalCode,
+    country_param: parsed.data.country,
   })
 
   if (error) {
@@ -69,5 +68,5 @@ export async function updateShippingInfo(
   }
 
   revalidatePath("/account")
-  return { success: true, message: "Shipping information updated successfully!" }
+  return { success: true, message: "Account information updated successfully!" }
 }

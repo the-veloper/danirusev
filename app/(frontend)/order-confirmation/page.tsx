@@ -1,38 +1,35 @@
-"use client"
+'use client'
 
-import { useSearchParams } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { CheckCircle } from "lucide-react"
+import { useSearchParams } from 'next/navigation'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 export default function OrderConfirmationPage() {
   const searchParams = useSearchParams()
-  const orderId = `#${searchParams.get("orderId")}`
+  const orderId = searchParams.get('order_id')
 
   return (
-    <div className="container mx-auto py-12 flex items-center justify-center">
-      <Card className="w-full max-w-lg text-center">
+    <div className="container mx-auto py-8 px-4 max-w-2xl text-center">
+      <Card>
         <CardHeader>
-          <div className="mx-auto bg-green-100 rounded-full h-16 w-16 flex items-center justify-center">
-            <CheckCircle className="h-10 w-10 text-green-600" />
-          </div>
-          <CardTitle className="mt-4 text-2xl">Thank You for Your Order!</CardTitle>
-          <CardDescription>
-            Your order has been placed successfully.
-          </CardDescription>
+          <CardTitle className="text-3xl text-green-600">
+            Thank You For Your Order!
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <p>Your order has been placed successfully.</p>
+          {orderId && (
+            <p className="text-lg">
+              Your Order ID is: <span className="font-bold">{orderId}</span>
+            </p>
+          )}
           <p className="text-muted-foreground">
-            Your order number is <span className="font-bold text-foreground">#{orderId}</span>.
-            We will notify you once it has been shipped.
+            You will receive an email confirmation shortly.
           </p>
-          <div className="flex gap-4 justify-center">
+          <div className="pt-4">
             <Button asChild>
-              <Link href="/">Go to Homepage</Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link href="/account">View My Orders</Link>
+              <Link href="/account">View Your Orders</Link>
             </Button>
           </div>
         </CardContent>

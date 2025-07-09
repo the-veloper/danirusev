@@ -14,12 +14,15 @@ export default async function AccountPage() {
     redirect("/sign-in")
   }
 
-  // Fetch the user's profile from the new 'profiles' table
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
+  // Fetch profile using the new RPC call to the correct schema
+  const { data: profile, error } = await supabase
+    .rpc("get_profile_by_id", { user_id: user.id })
     .single()
+
+  if (error) {
+    console.error("Error fetching profile:", error.message)
+    // You might want to show an error message to the user
+  }
 
   return (
     <div className="container mx-auto py-8 px-4">
