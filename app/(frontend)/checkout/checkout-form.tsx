@@ -43,7 +43,10 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
   const [state, formAction] = useActionState(createOrder, initialState)
 
   const subtotal = useMemo(() => {
-    return items.reduce((acc, item) => acc + item.price * item.quantity, 0)
+    return items.reduce(
+      (acc, item) => acc + parseFloat(item.price as any) * item.quantity,
+      0,
+    )
   }, [items])
 
   useEffect(() => {
@@ -87,7 +90,7 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
                       </p>
                     </div>
                     <p className="font-medium">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      ${(parseFloat(item.price as any) * item.quantity).toFixed(2)}
                     </p>
                   </div>
                 ))}

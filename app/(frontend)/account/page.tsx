@@ -14,19 +14,24 @@ export default async function AccountPage() {
     redirect("/sign-in")
   }
 
-  // Fetch profile using the new RPC call to the correct schema
+  // Fetch profile from the 'ecommerce' schema.
+  // We explicitly select from `profiles` in the `ecommerce` schema.
+  // Fetch profile using the RPC call, providing types for both the
+  // function name (as a literal type) and the expected return data.
   const { data: profile, error } = await supabase
-    .rpc("get_profile_by_id", { user_id: user.id })
+    .rpc('get_user_profile', {})
+    .returns<Profile>()
     .single()
 
   if (error) {
-    console.error("Error fetching profile:", error.message)
-    // You might want to show an error message to the user
+    console.error('Error fetching profile:', error.message)
   }
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6 text-center md:text-left">Твоят профил</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center md:text-left">
+        Your Profile
+      </h1>
       <AccountForm user={user} profile={profile} />
     </div>
   )

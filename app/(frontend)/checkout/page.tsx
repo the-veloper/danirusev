@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { CheckoutForm } from './checkout-form'
+import { Profile } from '@/types/supabase'
 
 export default async function CheckoutPage() {
   const supabase = await createClient()
@@ -16,9 +17,10 @@ export default async function CheckoutPage() {
   }
 
   // Fetch the user's profile to pre-fill the form
-  // We use the function created in the previous task
+  // We use the verified RPC function and provide the correct return type
   const { data: profile, error } = await supabase
-    .rpc('get_profile_by_id', { user_id: user.id })
+    .rpc('get_user_profile', {})
+    .returns<Profile>()
     .single()
 
   if (error) {
