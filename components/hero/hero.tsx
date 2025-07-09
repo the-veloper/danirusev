@@ -1,6 +1,7 @@
 "use client"
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const Hero = () => {
 
@@ -19,8 +20,10 @@ const Hero = () => {
         Your browser does not support the video tag.
       </video>
       <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white bg-black/50">
-        <h1 className="text-4xl font-gagalin md:text-6xl text-white dark:font-outline">Life is too short for slow cars<br></br> and boring women</h1>
-        <Button size='lg' className="mt-8 text-xl bg-main hover:bg-main/80 font-gagalin text-outline-md text-alt">Резервирай сега</Button>
+        <h1 className="text-4xl font-gagalin md:text-6xl text-white dark:font-outline">Life is too short for slow cars<br></br> and basic women</h1>
+        <Button size='lg' className="mt-8 text-xl bg-main hover:bg-main/80 font-gagalin text-outline-md text-alt">
+        <Link href="/experiences">Резервирай сега</Link>
+        </Button>
       </div>
     </div>
   );

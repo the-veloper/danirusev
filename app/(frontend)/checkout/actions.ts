@@ -109,7 +109,7 @@ export async function createOrder(
 
   return {
     success: true,
-    message: 'Order created successfully!',
+    message: 'Поръчката е създадена успешно!',
     orderId: newOrderId,
   }
 }

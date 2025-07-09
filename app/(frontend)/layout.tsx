@@ -7,6 +7,7 @@ import { Toaster } from 'sonner';
 import { Navbar } from "@/components/layout/navbar";
 import localFont from "next/font/local";
 import { Suspense } from "react";
+import { Footer } from "@/components/layout/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${gagalin.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${gagalin.variable} antialiased min-h-screen flex flex-col`}
       >
         <ThemeProvider
           attribute="class"
@@ -46,10 +47,13 @@ export default function RootLayout({
         >
           <AuthProvider>
             <Navbar />
-            <Suspense fallback={<div>Loading...</div>}>
-              {children}
-            </Suspense>
+            <main className="flex-grow">
+              <Suspense fallback={<div>Loading...</div>}>
+                {children}
+              </Suspense>
+            </main>
             <Toaster />
+            <Footer />
           </AuthProvider>
         </ThemeProvider>
       </body>

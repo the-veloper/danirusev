@@ -28,9 +28,9 @@ export default async function AccountPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6 text-center md:text-left">
-        Your Profile
+    <div className="container mx-auto py-4 px-4">
+      <h1 className="text-3xl font-bold mb-4 text-center md:text-left">
+        Вашият Профил
       </h1>
       <AccountForm user={user} profile={profile} />
     </div>

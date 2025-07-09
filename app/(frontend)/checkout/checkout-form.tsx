@@ -25,7 +25,7 @@ function SubmitButton() {
       disabled={pending}
       className="w-full bg-main hover:bg-main/80 text-alt"
     >
-      {pending ? 'Processing...' : 'Confirm and Place Order'}
+      {pending ? 'Зареждане...' : 'Потвърди и продължи към плащане'}
     </Button>
   )
 }
@@ -77,7 +77,7 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
         <div className="lg:col-span-1">
           <Card>
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+              <CardTitle>Преживяване / Продукт</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -86,18 +86,18 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
                     <div>
                       <p className="font-medium">{item.title}</p>
                       <p className="text-sm text-muted-foreground">
-                        Quantity: {item.quantity}
+                        Брой: {item.quantity}
                       </p>
                     </div>
                     <p className="font-medium">
-                      ${(parseFloat(item.price as any) * item.quantity).toFixed(2)}
+                      {(parseFloat(item.price as any) * item.quantity).toFixed(2)} лв.
                     </p>
                   </div>
                 ))}
                 <Separator />
                 <div className="flex justify-between font-bold text-lg">
-                  <p>Total</p>
-                  <p>${subtotal.toFixed(2)}</p>
+                  <p>Общо</p>
+                  <p>{subtotal.toFixed(2)} лв.</p>
                 </div>
               </div>
             </CardContent>
@@ -108,7 +108,7 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
         <div className="lg:col-span-1">
           <Card>
             <CardHeader>
-              <CardTitle>Shipping Information</CardTitle>
+              <CardTitle>Информация за доставка</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Hidden fields to pass cart data to the server action */}
@@ -127,7 +127,7 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
               <input type="hidden" name="totalPrice" value={subtotal} />
 
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="fullName">Име и Фамилия</Label>
                 <Input
                   id="fullName"
                   name="fullName"
@@ -136,7 +136,7 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phoneNumber">Phone Number</Label>
+                <Label htmlFor="phoneNumber">Тел. Номер</Label>
                 <Input
                   id="phoneNumber"
                   name="phoneNumber"
@@ -145,7 +145,7 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
+                <Label htmlFor="address">Адрес</Label>
                 <Input
                   id="address"
                   name="address"
@@ -155,7 +155,7 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="city">City</Label>
+                  <Label htmlFor="city">Град</Label>
                   <Input
                     id="city"
                     name="city"
@@ -164,7 +164,7 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="postalCode">Postal Code</Label>
+                  <Label htmlFor="postalCode">Пощенски код</Label>
                   <Input
                     id="postalCode"
                     name="postalCode"
@@ -174,7 +174,7 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="country">Country</Label>
+                <Label htmlFor="country">Държава</Label>
                 <Input
                   id="country"
                   name="country"

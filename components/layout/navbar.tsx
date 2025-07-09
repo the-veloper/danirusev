@@ -103,9 +103,9 @@ export function Navbar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  variant="ghost"
+                  variant="main"
                   size="icon"
-                  className="relative text-foreground hover:text-foreground"
+                  className="relative "
                   aria-label="User Menu"
                 >
                   <User className="h-5 w-5" />

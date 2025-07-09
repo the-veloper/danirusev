@@ -202,10 +202,10 @@ function ExperiencesView({ experiences }: ExperiencesPageClientProps) {
                     )
                   })}
                 </AnimatePresence>
-                <Button variant="outline" size="icon" className="absolute left-4 z-40 bg-white/90 backdrop-blur-sm hover:bg-white" onClick={prevExperience}>
+                <Button variant="outline" size="icon" className="absolute left-4 z-40 bg-white/90 backdrop-blur-sm hover:bg-white cursor-pointer" onClick={prevExperience}>
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
-                <Button variant="outline" size="icon" className="absolute right-4 z-40 bg-white/90 backdrop-blur-sm hover:bg-white" onClick={nextExperience}>
+                <Button variant="outline" size="icon" className="absolute right-4 z-40 bg-white/90 backdrop-blur-sm hover:bg-white cursor-pointer" onClick={nextExperience}>
                   <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>
@@ -274,9 +274,9 @@ function ExperiencesView({ experiences }: ExperiencesPageClientProps) {
                 <Button
                   size="lg"
                   onClick={handleAddToCart}
-                  className={`bg-gradient-to-r ${gradients[experiences.findIndex(e => e.id === currentExperience.id) % gradients.length]} text-white px-12 py-4 text-lg font-bold text-outline-sm hover:scale-105 transition-transform`}
+                  className={`bg-gradient-to-r ${gradients[experiences.findIndex(e => e.id === currentExperience.id) % gradients.length]} cursor-pointer px-12 py-4 text-lg font-bold text-outline-sm hover:scale-105 transition-transform`}
                 >
-                  Купи Сега - {currentExperience.price} лв
+                  <span className="text-white">Купи Сега - {currentExperience.price} лв</span>
                 </Button>
               </div>
             </motion.div>

@@ -23,15 +23,15 @@ export default async function OrdersPage() {
     // Render an error message or fallback UI
     return (
       <div className="container mx-auto py-8 px-4 text-center">
-        <h1 className="text-3xl font-bold mb-6">My Orders</h1>
-        <p className="text-red-500">Could not load orders. Please try again later.</p>
+        <h1 className="text-3xl font-bold mb-6">Моите поръчки</h1>
+        <p className="text-red-500">Не успяхме да заредим поръчки. Моля опитайте по-късно!</p>
       </div>
     )
   }
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6">My Orders</h1>
+      <h1 className="text-3xl font-bold mb-6">Моите поръчки</h1>
       <OrdersList orders={orders} />
     </div>
   )

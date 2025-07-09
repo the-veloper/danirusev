@@ -140,6 +140,10 @@
   -webkit-text-stroke: 0.5px var(--alt);
 }
 
+.font-outline-sm {
+  -webkit-text-stroke: 0.1px var(--alt);
+}
+
 .text-outline-sm {
   text-shadow: #000 0.5px 0 10px;
 }

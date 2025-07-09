@@ -45,9 +45,9 @@ export function OrdersList({ orders }: OrdersListProps) {
   if (!orders || orders.length === 0) {
     return (
       <div className="text-center py-12 border-2 border-dashed rounded-lg">
-        <h2 className="text-xl font-semibold">You have no orders yet.</h2>
+        <h2 className="text-xl font-semibold">Все още нямате поръчки.</h2>
         <p className="text-muted-foreground mt-2">
-          When you place an order, it will appear here.
+          Когато направите поръчка, тя ще се появи тук.
         </p>
       </div>
     )
@@ -64,7 +64,7 @@ export function OrdersList({ orders }: OrdersListProps) {
           <AccordionTrigger className="p-6 hover:no-underline">
             <div className="flex flex-wrap items-center justify-between w-full gap-4">
               <div className="flex-1 text-left min-w-[120px]">
-                <p className="font-bold text-lg">Order #{order.id}</p>
+                <p className="font-bold text-lg">Поръчка #{order.id}</p>
                 <p className="text-sm text-muted-foreground">
                   {new Date(order.created_at).toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -79,7 +79,7 @@ export function OrdersList({ orders }: OrdersListProps) {
                 </Badge>
               </div>
               <div className="flex-1 font-bold text-lg text-right min-w-[100px]">
-                ${parseFloat(order.total_price).toFixed(2)}
+                {parseFloat(order.total_price).toFixed(2)} лв.
               </div>
             </div>
           </AccordionTrigger>
@@ -87,25 +87,25 @@ export function OrdersList({ orders }: OrdersListProps) {
             <Separator className="mb-4" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <h3 className="font-semibold mb-2">Items Ordered</h3>
+                <h3 className="font-semibold mb-2">Преживяване / Продукт</h3>
                 <div className="space-y-3">
                   {order.order_items.map(item => (
                     <div key={item.id} className="flex justify-between">
                       <div>
                         <p>{item.title}</p>
                         <p className="text-sm text-muted-foreground">
-                          Qty: {item.quantity}
+                          Брой: {item.quantity}
                         </p>
                       </div>
                       <p className="text-sm">
-                        ${parseFloat(item.price).toFixed(2)}
+                        {parseFloat(item.price).toFixed(2)} лв.
                       </p>
                     </div>
                   ))}
                 </div>
               </div>
               <div>
-                <h3 className="font-semibold mb-2">Shipped To</h3>
+                <h3 className="font-semibold mb-2">Изпратено към</h3>
                 <div className="text-sm text-muted-foreground">
                   <p>{order.shipping_address_snapshot.fullName}</p>
                   <p>{order.shipping_address_snapshot.address}</p>

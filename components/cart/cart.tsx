@@ -99,8 +99,8 @@ export function Cart() {
               </div>
             </div>
             <SheetFooter>
-              <Button asChild className="w-full">
-                <Link href="/checkout">Continue to Checkout</Link>
+              <Button variant="main" asChild className="w-full bg-main text-alt">
+                <Link href="/checkout">Продължи Напред →</Link>
               </Button>
             </SheetFooter>
           </div>

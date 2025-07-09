@@ -19,7 +19,7 @@ export function CartWidget() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="main" size="icon" className="relative">
           {isMounted && items.length > 0 && (
             <Badge
               variant="destructive"
@@ -29,7 +29,7 @@ export function CartWidget() {
             </Badge>
           )}
           <ShoppingCart className="h-5 w-5" />
-          <span className="sr-only">Open cart</span>
+          <span className="sr-only">Отвори количката</span>
         </Button>
       </SheetTrigger>
       <Cart />

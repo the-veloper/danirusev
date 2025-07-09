@@ -13,23 +13,23 @@ export default function OrderConfirmationPage() {
     <div className="container mx-auto py-8 px-4 max-w-2xl text-center">
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl text-green-600">
-            Thank You For Your Order!
+          <CardTitle className="text-4xl text-main font-gagalin ">
+            Благодарим за Вашата поръчка!
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p>Your order has been placed successfully.</p>
+          <p>Вашата поръчка е изпратена успешно.</p>
           {orderId && (
             <p className="text-lg">
-              Your Order ID is: <span className="font-bold">{orderId}</span>
+              № на поръчката е: <span className="font-bold">{orderId}</span>
             </p>
           )}
           <p className="text-muted-foreground">
-            You will receive an email confirmation shortly.
+            Скоро ще получите имейл с информация за поръчката.
           </p>
           <div className="pt-4">
-            <Button asChild>
-              <Link href="/account">View Your Orders</Link>
+            <Button asChild variant='main' className='bg-main text-alt'>
+              <Link href="/orders">Разгледайте Вашата поръчка</Link>
             </Button>
           </div>
         </CardContent>
