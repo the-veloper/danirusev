@@ -2,81 +2,111 @@ import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 import type { Stripe } from 'stripe'
 import { stripe } from '@/lib/stripe'
+import { createClient } from '@/utils/supabase/server'
 
-// GET handler for simple connectivity testing
-export async function GET() {
-  return NextResponse.json({
-    status: 'ok',
-    message: 'Stripe webhook endpoint is live.',
-  })
-}
+/**
+ * This is the handler for the Stripe webhook. It listens for the
+ * `checkout.session.completed` event, which is sent when a user
+ * successfully completes a payment.
+ *
+ * When this event is received, we create an order in our database.
+ */
+async function handleCheckoutSessionCompleted(event: Stripe.Event) {
+  const session = event.data.object as Stripe.Checkout.Session
+  const { userId, shippingAddress, cartItems } = session.metadata!
 
-async function handlePaymentIntentSucceeded(event: Stripe.Event) {
-  const paymentIntent = event.data.object as Stripe.PaymentIntent
-  console.log('✅ PaymentIntent succeeded:', paymentIntent.id)
-  // TODO: Update order status in your database
-  // TODO: Send confirmation email to customer
-}
+  // Validate that we have the metadata we need
+  if (!userId || !shippingAddress || !cartItems) {
+    console.error('🚫 Missing metadata in checkout session:', session.id)
+    // We can't create an order without this info, so we return early.
+    // We return a 200 status to Stripe so it doesn't retry the webhook.
+    return
+  }
 
-async function handlePaymentIntentFailed(event: Stripe.Event) {
-  const paymentIntent = event.data.object as Stripe.PaymentIntent
-  console.log('❌ PaymentIntent failed:', paymentIntent.id)
-  // TODO: Update order status in your database
-  // TODO: Send failure notification to customer
+  const supabase = await createClient()
+
+  // Check if we've already processed this event
+  const { data: existingOrder, error: checkError } = await supabase
+    .from('orders')
+    .select('id')
+    .eq('stripe_session_id', session.id)
+    .single()
+
+  if (checkError && checkError.code !== 'PGRST116') {
+    // An actual error occurred, not just "no rows found"
+    console.error('Error checking for existing order:', checkError)
+    throw new Error(`Database error: ${checkError.message}`)
+  }
+
+  if (existingOrder) {
+    console.log(`✅ Webhook for session ${session.id} already processed.`)
+    return
+  }
+
+  // Parse the metadata
+  const shippingAddressSnapshot = JSON.parse(shippingAddress)
+  const orderItemsForDb = JSON.parse(cartItems)
+  const totalPrice = session.amount_total! / 100 // Convert from cents
+
+  // Create the order in the database using the RPC function
+  const { error: createOrderError } = await supabase.rpc(
+    'create_order_with_items',
+    {
+      p_user_id: userId,
+      p_total_price: totalPrice,
+      p_shipping_address_snapshot: shippingAddressSnapshot,
+      p_order_items: orderItemsForDb,
+      p_stripe_session_id: session.id, // Pass the session ID
+    },
+  )
+
+  if (createOrderError) {
+    console.error('Error creating order from webhook:', createOrderError)
+    throw new Error(`Database error: ${createOrderError.message}`)
+  }
+
+  console.log(`✅ Order created for session: ${session.id}`)
+
+  // TODO: Here you could also trigger other post-payment actions,
+  // such as sending a confirmation email to the user.
 }
 
 export async function POST(req: Request) {
-  console.log('--- Stripe Webhook POST Request Received ---')
   const body = await req.text()
-  const signature = req.headers.get('stripe-signature')
-
-  console.log('Received webhook with signature:', signature?.slice(0, 10) + '...')
-
-  if (!signature) {
-    console.error('🚫 No stripe-signature found in request headers.')
-    return NextResponse.json(
-      { message: 'Missing stripe-signature header' },
-      { status: 400 },
-    )
-  }
+  const signature = headers().get('stripe-signature')!
 
   let event: Stripe.Event
-
   try {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!,
     )
-    console.log('✅ Webhook event constructed successfully:', event.type)
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
     console.error(`❌ Webhook signature verification failed: ${errorMessage}`)
     return NextResponse.json(
-      { message: `Webhook signature verification failed: ${errorMessage}` },
+      { message: `Webhook Error: ${errorMessage}` },
       { status: 400 },
     )
   }
 
   try {
     switch (event.type) {
-      case 'payment_intent.succeeded':
-        await handlePaymentIntentSucceeded(event)
-        break
-      case 'payment_intent.payment_failed':
-        await handlePaymentIntentFailed(event)
+      case 'checkout.session.completed':
+        await handleCheckoutSessionCompleted(event)
         break
       default:
         console.log(`Unhandled event type: ${event.type}`)
     }
-
     return NextResponse.json({ received: true })
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-    console.error(`Webhook handler for event ${event.type} failed: ${errorMessage}`)
+    console.error(`Webhook handler failed: ${errorMessage}`)
     return NextResponse.json(
       { message: 'Webhook handler failed' },
       { status: 500 },
     )
   }
-} 
+}
+ 

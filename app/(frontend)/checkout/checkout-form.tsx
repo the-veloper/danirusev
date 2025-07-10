@@ -4,7 +4,7 @@ import { useCartStore } from '@/lib/stores/cart-store'
 import { Profile } from '@/types/supabase'
 import { useActionState, useEffect, useMemo } from 'react'
 import { useFormStatus } from 'react-dom'
-import { createOrder, CheckoutFormState } from './actions'
+import { createCheckoutSession, CheckoutFormState } from './actions'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { loadStripe } from '@stripe/stripe-js'
 
 interface CheckoutFormProps {
   profile: Profile | null
@@ -25,10 +26,15 @@ function SubmitButton() {
       disabled={pending}
       className="w-full bg-main hover:bg-main/80 text-alt"
     >
-      {pending ? 'Зареждане...' : 'Потвърди и продължи към плащане'}
+      {pending ? 'Зареждане...' : 'Продължи към плащане'}
     </Button>
   )
 }
+
+// Initialize Stripe outside the component to avoid re-creating it on every render
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
+)
 
 export function CheckoutForm({ profile }: CheckoutFormProps) {
   const router = useRouter()
@@ -37,10 +43,10 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
   const initialState: CheckoutFormState = {
     success: false,
     message: null,
-    fieldErrors: null,
-    orderId: null,
+    fieldErrors: {},
+    sessionId: null,
   }
-  const [state, formAction] = useActionState(createOrder, initialState)
+  const [state, formAction] = useActionState(createCheckoutSession, initialState)
 
   const subtotal = useMemo(() => {
     return items.reduce(
@@ -50,21 +56,36 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
   }, [items])
 
   useEffect(() => {
-    if (state.success && state.orderId) {
-      toast.success(state.message || 'Order placed successfully!')
-      clearCart()
-      router.push(`/order-confirmation?order_id=${state.orderId}`)
-    } else if (!state.success && state.message) {
-      toast.error(state.message)
+    const handleRedirect = async () => {
+      if (state.success && state.sessionId) {
+        toast.success(state.message || 'Redirecting to payment...')
+        const stripe = await stripePromise
+        if (stripe) {
+          const { error } = await stripe.redirectToCheckout({
+            sessionId: state.sessionId,
+          })
+          if (error) {
+            toast.error(error.message || 'Failed to redirect to Stripe.')
+          } else {
+            // On successful redirect, clear the cart
+            clearCart()
+          }
+        } else {
+          toast.error('Stripe could not be loaded.')
+        }
+      } else if (!state.success && state.message) {
+        toast.error(state.message)
+      }
     }
-  }, [state, clearCart, router])
+    handleRedirect()
+  }, [state, clearCart])
 
   if (items.length === 0) {
     return (
       <div className="text-center">
-        <p>Your cart is empty.</p>
+        <p>Вашата количка е празна.</p>
         <Button onClick={() => router.push('/')} className="mt-4">
-          Continue Shopping
+          Продължи с пазаруването
         </Button>
       </div>
     )
@@ -82,7 +103,10 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
             <CardContent>
               <div className="space-y-4">
                 {items.map(item => (
-                  <div key={item.id} className="flex justify-between items-center">
+                  <div
+                    key={item.id}
+                    className="flex justify-between items-center"
+                  >
                     <div>
                       <p className="font-medium">{item.title}</p>
                       <p className="text-sm text-muted-foreground">
@@ -90,7 +114,10 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
                       </p>
                     </div>
                     <p className="font-medium">
-                      {(parseFloat(item.price as any) * item.quantity).toFixed(2)} лв.
+                      {(parseFloat(item.price as any) * item.quantity).toFixed(
+                        2,
+                      )}{' '}
+                      лв.
                     </p>
                   </div>
                 ))}
@@ -124,7 +151,7 @@ export function CheckoutForm({ profile }: CheckoutFormProps) {
                   })),
                 )}
               />
-              <input type="hidden" name="totalPrice" value={subtotal} />
+              {/* The total price is now calculated on the server */}
 
               <div className="space-y-2">
                 <Label htmlFor="fullName">Име и Фамилия</Label>
