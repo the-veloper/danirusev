@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Send } from 'lucide-react'
 import { toast } from 'sonner'
+import { useAuth } from '../providers/supabase-auth-provider' // Adjust path if needed
 
 const contactFormSchema = z.object({
   name: z.string().min(1, { message: 'Името е задължително.' }),
@@ -18,7 +19,6 @@ const contactFormSchema = z.object({
     .min(1, { message: 'Имейлът е задължителен.' })
     .email({ message: 'Въведеният имейл е невалиден.' }),
   message: z.string().min(1, { message: 'Съобщението е задължително.' }),
-  // Honeypot field
   hiddenspam: z
     .string()
     .max(0, { message: 'This field must be empty.' })
@@ -30,15 +30,24 @@ type ContactFormInputs = z.infer<typeof contactFormSchema>
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [result, setResult] = useState<string | null>(null)
+  const { user, isLoading } = useAuth()
 
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitSuccessful },
   } = useForm<ContactFormInputs>({
     resolver: zodResolver(contactFormSchema),
   })
+
+  useEffect(() => {
+    if (user) {
+      setValue('name', user.user_metadata.name || '')
+      setValue('email', user.email || '')
+    }
+  }, [user, setValue])
 
   const onValid: SubmitHandler<ContactFormInputs> = async (data) => {
     setIsSubmitting(true)
@@ -58,9 +67,15 @@ export function ContactForm() {
 
       if (result.success) {
         setResult('Съобщението Ви е изпратено успешно!')
-        toast.success('Готово!', {
+        toast.success('Успех!', {
           description: 'Съобщението Ви е изпратено успешно!',
         })
+        // Only reset the message field if the user is logged in
+        if (user) {
+          setValue('message', '')
+        } else {
+          reset()
+        }
       } else {
         console.error('Error submitting form:', result)
         setResult(result.message || 'Възникна грешка при изпращането.')
@@ -91,14 +106,15 @@ export function ContactForm() {
   }
 
   useEffect(() => {
-    if (isSubmitSuccessful) {
+    if (isSubmitSuccessful && !user) {
       reset()
+    } else if (isSubmitSuccessful && user) {
+        setValue('message', '')
     }
-  }, [isSubmitSuccessful, reset])
+  }, [isSubmitSuccessful, reset, user, setValue])
 
   return (
     <form onSubmit={handleSubmit(onValid, onInvalid)} className='space-y-6'>
-      {/* Honeypot Spam Field */}
       <input
         type='text'
         autoComplete='off'
@@ -114,7 +130,7 @@ export function ContactForm() {
           id='name'
           placeholder='Вашето име'
           {...register('name')}
-          disabled={isSubmitting}
+          disabled={isLoading || !!user}
         />
         {errors.name && (
           <p className='text-sm text-destructive'>{errors.name.message}</p>
@@ -127,7 +143,7 @@ export function ContactForm() {
           type='email'
           placeholder='danirusev@gmail.com'
           {...register('email')}
-          disabled={isSubmitting}
+          disabled={isLoading || !!user}
         />
         {errors.email && (
           <p className='text-sm text-destructive'>{errors.email.message}</p>
@@ -166,4 +182,5 @@ export function ContactForm() {
     </form>
   )
 }
+
 
