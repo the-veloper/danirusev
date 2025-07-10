@@ -47,8 +47,10 @@ export async function createCheckoutSession(
   prevState: CheckoutFormState,
   formData: FormData,
 ): Promise<CheckoutFormState> {
+  // FIX: Await the headers() call to get the actual Headers object.
+  const headersList = await headers()
+  const origin = headersList.get('origin')!
   const supabase = await createClient()
-  const origin = headers().get('origin')!
 
   // 1. Authenticate the user
   const {
@@ -140,7 +142,7 @@ export async function createCheckoutSession(
         shippingAddress: JSON.stringify(shippingAddressSnapshot),
         cartItems: JSON.stringify(
           validatedData.cartItems.map(item => ({
-            product_id: item.id,
+            product_id: String(item.id),
             quantity: item.quantity,
             price: item.price,
             title: item.title,
