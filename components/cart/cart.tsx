@@ -24,7 +24,7 @@ const experienceGradients: { [key: string]: string } = {
   '3': gradients[2],
 };
 
-export function Cart() {
+export function Cart({ closeSheet }: { closeSheet: () => void }) {
   const { items, removeItem, increaseQuantity, decreaseQuantity } = useCartStore()
   const subtotal = items.reduce((acc, item) => acc + parseFloat(item.price) * item.quantity, 0)
 
@@ -34,7 +34,7 @@ export function Cart() {
   };
 
   return (
-    <SheetContent className="flex w-full flex-col px-8 sm:max-w-lg">
+    <SheetContent className="flex w-full flex-col px-8 sm:max-w-lg z-[50000]">
       <SheetHeader className="space-y-2.5 pr-6">
         <SheetTitle>Количка ({items.length})</SheetTitle>
       </SheetHeader>
@@ -99,7 +99,7 @@ export function Cart() {
               </div>
             </div>
             <SheetFooter>
-              <Button variant="main" asChild className="w-full bg-main text-alt">
+              <Button variant="main" asChild className="w-full bg-main text-alt" onClick={closeSheet}>
                 <Link href="/checkout">Продължи Напред →</Link>
               </Button>
             </SheetFooter>

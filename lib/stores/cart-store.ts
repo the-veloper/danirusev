@@ -35,11 +35,11 @@ export const useCartStore = create<CartState>()(
           const updatedItems = [...currentItems]
           updatedItems[existingItemIndex].quantity += 1
           set({ items: updatedItems })
-          toast.success(`${item.title} quantity updated.`)
+          toast.success(`Количеството е обновено`)
         } else {
           // New item, add it with quantity 1
           set({ items: [...currentItems, { ...item, quantity: 1 }] })
-          toast.success(`${item.title} added to cart!`)
+          toast.success(`Добавено`)
         }
       },
       removeItem: (itemId) => {
