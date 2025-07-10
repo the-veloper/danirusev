@@ -44,11 +44,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Dani Rusev 11 - Изживей скоростта. Почувствай адреналина.',
     description: 'Ваучери за екстремни подаръци - дрифт, рали и шофиране на спортни автомобили в България.',
-    url: 'https://www.danirusev.vercel.app', // **ВАЖНО**: Сменете с реалния домейн на сайта!
+    url: 'https://danirusev.vercel.app', // **ВАЖНО**: Сменете с реалния домейн на сайта!
     siteName: 'Dani Rusev 11',
     images: [
       {
-        url: 'https://www.danirusev.vercel.app/og-image.jpg', // **ВАЖНО**: Създайте и качете такова изображение!
+        url: 'https://danirusev.vercel.app/og-image.jpg', // **ВАЖНО**: Създайте и качете такова изображение!
         width: 1200,
         height: 630,
         alt: 'Дрифт автомобил на писта - Dani Rusev 11',
@@ -78,7 +78,7 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  metadataBase: new URL('https://www.danirusev.vercel.app'), // **ВАЖНО**: Сменете с реалния домейн!
+  metadataBase: new URL('https://danirusev.vercel.app'), // **ВАЖНО**: Сменете с реалния домейн!
 };
 
 
